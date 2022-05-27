@@ -1,8 +1,21 @@
-# SeleniumRunner
+# SeleniumRunner - yaml驱动Selenium测试
 
 ## 概述
 Selenium是基于浏览器的自动化测试工具，但是要写python代码；
 考虑到部分测试伙伴python能力不足，因此扩展Selenium，支持通过yaml配置测试步骤
+
+## 特性
+1. 基于 selenium 的webdriver
+2. 使用 selenium-requests 扩展来处理post请求与上传请求
+3. 支持通过yaml来配置执行的步骤
+每个步骤可以有多个动作，但单个步骤中动作名不能相同（yaml语法要求）
+动作代表webdriver上的一种操作，如get/post/upload/submit_form等等
+4. 支持提取器
+
+## todo
+1. 支持外部指定配置文件
+2. 支持校验器
+3. 支持更多的动作
 
 ## 安装依赖
 ```
