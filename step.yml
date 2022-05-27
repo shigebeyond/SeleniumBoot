@@ -1,17 +1,3 @@
-# SeleniumRunner
-
-## 概述
-Selenium是基于浏览器的自动化测试工具，但是要写python代码；
-考虑到部分测试伙伴python能力不足，因此扩展Selenium，支持通过yaml配置测试步骤
-
-## 安装依赖
-```
-pip3 install -r requirements.txt
-```
-
-## 配置文件
-用于指定步骤, 如 step.yml
-```
 - # 登录
   get: http://admin.jym1.com/login
   submit_form:
@@ -59,10 +45,3 @@ pip3 install -r requirements.txt
 -
   get: http://admin.jym1.com/store/store_list
   sleep: 2
-```
-
-
-## 运行
-```
-python ./runner.py 配置文件
-```
