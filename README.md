@@ -49,7 +49,8 @@ pip3 install -r requirements.txt
     url: http://admin.jym1.com/store/add_store
   upload: # 上传文件/图片
     url: http://admin.jym1.com/upload/common_upload_img/store_img
-    files: # 参数名:文件本地路径
+    files: # 上传的多个文件
+      # 参数名:文件本地路径
       file: /home/shi/fruit.jpeg
     extract_by_jsonpath:
       img: $.data.url
@@ -57,7 +58,8 @@ pip3 install -r requirements.txt
   post:
     url: http://admin.jym1.com/store/add_store
     is_ajax: true
-    data:
+    data: # post的参数
+      # 参数名:参数值
       store_name: teststore-$random_str6
       store_logo_url: '$img'
       store_img_urls: '["$img"]'
@@ -76,7 +78,7 @@ pip3 install -r requirements.txt
       bank_name: 中国工商银行
       bank_card_num: 6222024100018669328
       store_work_time: '["{\"date_from\":\"1\",\"date_to\":\"1\",\"work_start_time\":\"09:00:00\",\"work_end_time\":\"20:00:00\"}"]'
--
+- # 门店列表,查看新建门店
   goto:
     url: http://admin.jym1.com/store/store_list
   sleep: 2
