@@ -1,0 +1,11 @@
+- # 首页
+  goto:
+    url: http://list.shikee.com/
+- # 搜索
+  goto:
+    url: http://list.shikee.com/?keyword=%E8%8A%8B%E5%A4%B4&topSearch=1
+    extract_by_xpath:
+      detail_url: //div[@class="item-box"][1]/a/@href # 详情页连接
+- # 详情页
+  goto:
+    url: $detail_url

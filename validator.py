@@ -2,15 +2,15 @@
 # -*- coding: utf-8 -*-
 
 import re
+import response_wrapper
+from selenium import webdriver
 from requests import Response
-from response_wrapper import ResponseWrap
-from runner import MyWebDriver
 from util import print_exception
 
 # 校验器
-class Validator(ResponseWrap):
+class Validator(response_wrapper.ResponseWrap):
 
-    def __init__(self, driver: MyWebDriver, res: Response = None):
+    def __init__(self, driver: webdriver.Chrome, res: Response = None):
         super(Validator, self).__init__(driver, res)
         # 校验函数映射
         self.funcs = {
@@ -38,7 +38,7 @@ class Validator(ResponseWrap):
 
     # 执行单个类型的校验
     def run_type(self, type, fields):
-        for path, rules in fields:
+        for path, rules in fields.items():
             # 获得字段值
             val = self._get_val_by(type, path)
             # 校验单个字段

@@ -1,14 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import re
 from lxml import etree
 from requests import Response
-from runner import MyWebDriver
+from selenium import webdriver
 
 # 响应包装器
 class ResponseWrap(object):
 
-    def __init__(self, driver: MyWebDriver, res: Response = None):
+    def __init__(self, driver: webdriver.Chrome, res: Response = None):
         # webdriver
         self.driver = driver
         # 响应
@@ -24,11 +25,26 @@ class ResponseWrap(object):
             return self.driver.find_element_by_css_selector(path).text
 
         if type == 'xpath':
+            # 检查xpath是否最后有属性
+            mat = re.search('/@[\w\d]+$', path)
+            prop = ''
+            if (mat != None):  # 有属性
+                # 分离元素path+属性
+                prop = mat.group()
+                path = path.replace(prop, '')
+                prop = prop.replace('/@', '')
+
             if self.res != None:
                 html = etree.parse(self.res.text, etree.HTMLParser())
-                return html.xpath(path).text
+                ele = html.xpath(path)
+                if prop != '': # 获得属性
+                    return ele.get(prop)
+                return ele.text
 
-            return self.driver.find_element_by_xpath(path).text
+            ele = self.driver.find_element_by_xpath(path)
+            if prop != '': # 获得属性
+                return ele.get_attribute(prop)
+            return ele.text
 
         if type == 'jsonpath':
             if self.res != None:

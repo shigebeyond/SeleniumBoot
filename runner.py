@@ -5,8 +5,8 @@ import time
 import sys
 import os
 from util import read_yaml, print_exception, set_var, replace_var
-from validator import Validator
-from extractor import Extractor
+import extractor
+import validator
 from selenium import webdriver
 from selenium.webdriver.remote.webdriver import WebDriver
 from seleniumrequests.request import RequestsSessionMixin
@@ -70,10 +70,10 @@ class Runner(object):
     # 解析响应
     def _analyze_response(self, res, config):
         # 校验器
-        v = Validator(self.driver, res)
+        v = validator.Validator(self.driver, res)
         v.run(config)
         # 提取器
-        e = Extractor(self.driver, res)
+        e = extractor.Extractor(self.driver, res)
         e.run(config)
 
     # 跳转

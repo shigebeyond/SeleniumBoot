@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import re
+import response_wrapper
 from requests import Response
-from response_wrapper import ResponseWrap
 from runner import MyWebDriver
 from util import print_exception, set_var
 
 # 抽取器
-class Extractor(ResponseWrap):
+class Extractor(response_wrapper.ResponseWrap):
 
     def __init__(self, driver: MyWebDriver, res: Response = None):
         super(Extractor, self).__init__(driver, res)
@@ -26,7 +26,7 @@ class Extractor(ResponseWrap):
 
     # 执行单个类型的抽取
     def run_type(self, type, fields):
-        for path, var in fields:
+        for var, path in fields.items():
             # 获得字段值
             val = self._get_val_by(type, path)
             # 抽取单个字段
