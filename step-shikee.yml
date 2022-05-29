@@ -1,7 +1,7 @@
 - # 首页
   goto:
-    url: http://list.shikee.com/
-- # 搜索
+    url: http://www.shikee.com/
+- # 搜索页
   goto:
     url: http://list.shikee.com/?keyword=%E8%8A%8B%E5%A4%B4&topSearch=1
     extract_by_xpath:
@@ -9,3 +9,12 @@
 - # 详情页
   goto:
     url: $detail_url
+    extract_by_xpath:
+      dyn_data_url: //script[contains(@src,'data/')]/@src # 匹配 http://detail.shikee.com/data/31985783?v=2107065996
+  # 动态数据
+  get:
+    url: $dyn_data_url
+    extract_by_eval:
+      dyn_data: "json.loads(response.text[16:-1])" # 变量response是响应对象
+  # 调试打印
+  print: "总申请数=${dyn_data.total_apply}, 剩余份数=${dyn_data.quantity_remain}"

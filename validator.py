@@ -39,18 +39,18 @@ class Validator(response_wrapper.ResponseWrap):
     # 执行单个类型的校验
     def run_type(self, type, fields):
         for path, rules in fields.items():
-            # 获得字段值
-            val = self._get_val_by(type, path)
             # 校验单个字段
-            self.run_field(val, rules)
+            self.run_field(type, path, rules)
 
     # 执行单个字段的校验
-    def run_field(self, val, rules):
+    def run_field(self, type, path, rules):
+        # 获得字段值
+        val = self._get_val_by(type, path)
         # 逐个函数校验
         for func, param in rules.items():
             b = self.run_func(func, val, param)
             if b == False:
-                raise Exception(f"不满足校验条件: {val} {func} '{param}'")
+                raise Exception(f"响应元素[{path}]不满足校验条件: {val} {func} '{param}'")
 
     '''
     执行单个函数：就是调用函数

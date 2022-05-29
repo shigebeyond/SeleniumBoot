@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import re
+import json
 import response_wrapper
 from requests import Response
+import util
 from runner import MyWebDriver
 from util import print_exception, set_var
 
@@ -24,6 +26,9 @@ class Extractor(response_wrapper.ResponseWrap):
         if 'extract_by_css' in config:
             return self.run_type('css', config['extract_by_css'])
 
+        if 'extract_by_eval' in config:
+            return self.run_eval(config['extract_by_eval'])
+
     # 执行单个类型的抽取
     def run_type(self, type, fields):
         for var, path in fields.items():
@@ -32,4 +37,13 @@ class Extractor(response_wrapper.ResponseWrap):
             # 抽取单个字段
             set_var(var, val)
             print(f"从响应中抽取参数: {var}={val}")
+
+    # 执行eval类型的抽取
+    def run_eval(self, fields):
+        for var, expr in fields.items():
+            # 获得字段值
+            val = eval(expr, globals(), util.vars) # 丢失本地与全局变量, 如引用不了json模块
+            # 抽取单个字段
+            set_var(var, val)
+            print(f"抽取参数: {var}={val}")
 

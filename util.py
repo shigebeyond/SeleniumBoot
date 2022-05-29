@@ -39,8 +39,12 @@ def replace_var(txt):
         if name.startswith('random_int'):
             len = int(name[10:])
             return random_int(len)
+        if '.' in name: # 有多级属性, 如 data.msg
+            return jsonpath(vars, '$.' + name)[0]
         return vars[name]
-    return re.sub(r'\$([\w\d_]+)+', replace, txt)
+    txt = re.sub(r'\$([\w\d_]+)', replace, txt) # 处理变量 $msg
+    txt = re.sub(r'\$\{([\w\d_\.]+)\}', replace, txt) # 处理变量 ${data.msg}
+    return txt
 
 # 生成一个指定长度的随机字符串
 def random_str(n):

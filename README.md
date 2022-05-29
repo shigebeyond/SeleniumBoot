@@ -2,7 +2,10 @@
 
 ## 概述
 Selenium是基于浏览器的自动化测试工具，但是要写python代码；
-考虑到部分测试伙伴python能力不足，因此扩展Selenium，支持通过yaml配置测试步骤
+
+考虑到部分测试伙伴python能力不足，因此扩展Selenium，支持通过yaml配置测试步骤;
+
+本框架让伙伴通过编写yaml, 就可以实现一系列复杂的浏览器操作步骤, 如填充表单/提交表单/上传文件/校验响应/提取变量/打印变量等
 
 ## 特性
 1. 基于 selenium 的webdriver
@@ -95,12 +98,94 @@ python runner.py 步骤配置文件
 sleep: 2 # 线程睡眠2秒
 ```
 
-2. goto: 浏览器跳转
+2. print: 打印, 支持输出变量
+```yaml
+# 调试打印
+print: "总申请数=${dyn_data.total_apply}, 剩余份数=${dyn_data.quantity_remain}"
+```
+
+变量格式:
+```
+$msg 一级变量, 以$为前缀
+${data.msg} 多级变量, 用 ${ 与 } 包含
+```
+
+3. goto: 浏览器跳转
 ```yaml
 goto:
-    url: http://admin.jym1.com/goods/goods_service_list
+    url: http://admin.jym1.com/goods/goods_service_list # url,支持写变量
     extract_by_xpath: # 网页中html的提取变量
       goods_id: //table/tbody/tr[1]/td[1] # 第一行第一列
+```
+
+4. get: 发get请求, 但无跳转
+```yaml
+get:
+    url: $dyn_data_url # url,支持写变量
+    extract_by_eval:
+      dyn_data: "json.loads(response.text[16:-1])" # 变量response是响应对象
+```
+
+5. post: 发post请求, 但无跳转
+```yaml
+post:
+    url: http://admin.jym1.com/store/add_store # url,支持写变量
+    is_ajax: true
+    data: # post的参数
+      # 参数名:参数值
+      store_name: teststore-$random_str6
+      store_logo_url: '$img'
+```
+
+6. upload: 上传文件
+```yaml
+upload: # 上传文件/图片
+    url: http://admin.jym1.com/upload/common_upload_img/store_img
+    files: # 上传的多个文件
+      # 参数名:文件本地路径
+      file: /home/shi/fruit.jpeg
+    extract_by_jsonpath:
+      img: $.data.url
+```
+
+7. submit_form: 提交表单
+是 `input_by_name` 与 `click_by_css('[type=submit]')` 的结合
+```yaml
+submit_form:
+  # 输入框name: 填充的值(支持写变量)
+  account: '18877310999'
+  passwd: '123456'
+```
+
+8. input_by_name: 填充 name 指定的输入框
+```yaml
+input_by_name:
+  # 输入框name: 填充的值(支持写变量)
+  account: '18877310999'
+```
+
+9. input_by_css: 填充 css selector 指定的输入框
+```yaml
+input_by_css:
+  # 输入框css selector模式: 填充的值(支持写变量)
+  '#account': '18877310999'
+```
+
+10. input_by_xpath: 填充 xpath 指定的输入框
+```yaml
+input_by_xpath:
+  # 输入框xpath路径: 填充的值(支持写变量)
+  "//input[@id='account']": '18877310999'
+```
+
+11. click_by_css: 点击 css selector 指定的按钮
+```yaml
+click_by_css: 'button[type=submit]' # 按钮的css selector模式
+```
+
+12. click_by_xpath: 点击 xpath 指定的按钮
+```yaml
+click_by_xpath: '//button[@type="submit"]' # 按钮的xpath路径
 ```
 
 ## 校验器
@@ -151,7 +236,7 @@ validate_by_jsonpath:
 只针对 goto/get/post/upload 有发送http请求的动作, 主要是为了从响应中提取变量
 
 1. extract_by_xpath
-从html的响应中解析 xpath 路径对应的元素的值
+从html的响应中解析 xpath 路径指定的元素的值
 ```yaml
 extract_by_xpath:
   # 变量名: xpath路径
@@ -159,7 +244,7 @@ extract_by_xpath:
 ```
 
 2. extract_by_css
-从html的响应中解析 css selector 模式对应的元素的值
+从html的响应中解析 css selector 模式指定的元素的值
 ```yaml
 extract_by_css:
   # 变量名: css selector 模式
@@ -172,4 +257,12 @@ extract_by_css:
 extract_by_jsonpath:
   # 变量名: json响应的多层属性
   img: $.data.url
+```
+
+4. extract_by_eval
+使用 `eval(表达式)` 执行表达式, 并将执行结果记录到变量中
+```yaml
+extract_by_eval:
+    # 变量名: 表达式
+    dyn_data: "json.loads(response.text[16:-1])" # 变量response是响应对象
 ```

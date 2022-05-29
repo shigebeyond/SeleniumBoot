@@ -23,6 +23,7 @@ class Runner(object):
         # 动作映射函数
         self.actions = {
             'sleep': self.sleep,
+            'print': self.print,
             'goto': self.goto,
             'get': self.get,
             'post': self.post,
@@ -67,8 +68,15 @@ class Runner(object):
     def sleep(self, seconds):
         time.sleep(seconds)
 
+    # 打印
+    def print(self, msg):
+        msg = replace_var(msg)  # 替换变量
+        print(msg)
+
     # 解析响应
     def _analyze_response(self, res, config):
+        # 添加固定变量:响应
+        set_var('response', res)
         # 校验器
         v = validator.Validator(self.driver, res)
         v.run(config)
@@ -90,6 +98,7 @@ class Runner(object):
     # get请求
     def get(self, config = {}):
         url = config['url']
+        url = replace_var(url)  # 替换变量
         headers = {}
         if 'is_ajax' in config and config['is_ajax']:
             headers = {
@@ -103,6 +112,7 @@ class Runner(object):
     # post请求
     def post(self, config = {}):
         url = config['url']
+        url = replace_var(url)  # 替换变量
         data = config['data']
         for k, v in data.items():
             data[k] = replace_var(v)  # 替换变量
@@ -120,6 +130,7 @@ class Runner(object):
     def upload(self, config = {}):
         # 上传请求
         url = config['url']
+        url = replace_var(url)  # 替换变量
         files = {}
         for name, path in config['files'].items():
             files[name] = open(path, 'rb')

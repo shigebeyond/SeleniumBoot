@@ -5,6 +5,7 @@ import re
 from lxml import etree
 from requests import Response
 from selenium import webdriver
+from jsonpath import jsonpath
 
 # 响应包装器
 class ResponseWrap(object):
@@ -26,7 +27,7 @@ class ResponseWrap(object):
 
         if type == 'xpath':
             # 检查xpath是否最后有属性
-            mat = re.search('/@[\w\d]+$', path)
+            mat = re.search('/@[\w\d_]+$', path)
             prop = ''
             if (mat != None):  # 有属性
                 # 分离元素path+属性
@@ -48,7 +49,8 @@ class ResponseWrap(object):
 
         if type == 'jsonpath':
             if self.res != None:
-                return self.res.json()
+                data = self.res.json()
+                return jsonpath(data, path)[0]
 
             raise Exception(f"goto的响应不支持查找类型: {type}")
 
