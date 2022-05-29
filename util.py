@@ -1,4 +1,6 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import time
 import yaml
 import re
@@ -8,9 +10,10 @@ from jsonpath import jsonpath
 # 变量
 vars = {}
 
-# 读web步骤
-def read_web_steps(path):
-    file = open(path, 'r', encoding="utf-8")
+# 读yaml配置
+# :param yaml_file (步骤配置的)yaml文件
+def read_yaml(yaml_file):
+    file = open(yaml_file, 'r', encoding="utf-8")
     txt = file.read()
     file.close()
     return yaml.load(txt, Loader=yaml.FullLoader)
@@ -54,12 +57,3 @@ def random_int(n):
   for i in range(n):
     random_str += str(random.randint(0, 9))
   return random_str
-
-# 从响应中抽取参数
-def extract_var(config, res):
-    if 'extract_by_jsonpath' in config:
-        res = res.json()
-        for var, path in config['extract_by_jsonpath'].items():  # json提取器
-            val = jsonpath(res, path)[0] # jsonpath 返回的居然是数组
-            vars[var] = val
-            print(f"从响应中抽取参数: {var}={val}")

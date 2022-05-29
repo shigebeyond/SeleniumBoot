@@ -1,22 +1,27 @@
 - # 登录
-  get: http://admin.jym1.com/login
+  goto:
+    url: http://admin.jym1.com/login
   submit_form:
     account: '18877310999'
     passwd: '123456'
 - # 商品列表
-  get: http://admin.jym1.com/goods/goods_service_list
-  # 网页中html的提取变量
-  extract_by_xpath:
-    goods_id: //table/tbody/tr[1]/td[1] # 第一行第一列
-#  extract_by_css:
-#    goods_id: table>tbody>tr:nth-child(1)>td:nth-child(1) # 第一行第一列
+  goto:
+    url: http://admin.jym1.com/goods/goods_service_list
+    # 网页中html的提取变量
+    extract_by_xpath:
+      goods_id: //table/tbody/tr[1]/td[1] # 第一行第一列
+  #  extract_by_css:
+  #    goods_id: table>tbody>tr:nth-child(1)>td:nth-child(1) # 第一行第一列
 - # 商品详情
-  get: http://admin.jym1.com/goods/goods_info?id=$goods_id&type=2
+  goto:
+    url: http://admin.jym1.com/goods/goods_info?id=$goods_id&type=2
 - # 新建门店
-  get: http://admin.jym1.com/store/add_store
-  upload: # 上传图片
+  goto:
+    url: http://admin.jym1.com/store/add_store
+  upload: # 上传文件/图片
     url: http://admin.jym1.com/upload/common_upload_img/store_img
-    file: /home/shi/fruit.jpeg
+    files: # 参数名:文件本地路径
+      file: /home/shi/fruit.jpeg
     extract_by_jsonpath:
       img: $.data.url
   # 提交新建门店，不要用 submit_form，ui中太麻烦了太复杂了（如三级地址要逐级动态加载）
@@ -43,5 +48,6 @@
       bank_card_num: 6222024100018669328
       store_work_time: '["{\"date_from\":\"1\",\"date_to\":\"1\",\"work_start_time\":\"09:00:00\",\"work_end_time\":\"20:00:00\"}"]'
 -
-  get: http://admin.jym1.com/store/store_list
+  goto:
+    url: http://admin.jym1.com/store/store_list
   sleep: 2

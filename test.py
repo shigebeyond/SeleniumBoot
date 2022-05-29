@@ -1,4 +1,6 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import time
 from selenium import webdriver
 from selenium.webdriver.remote.webdriver import WebDriver
