@@ -1,4 +1,0 @@
-xpath
-https://blog.csdn.net/xunxue1523/article/details/104584886/
-css selector
-https://blog.csdn.net/weixin_39847437/article/details/110959847

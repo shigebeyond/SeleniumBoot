@@ -5,13 +5,13 @@ Selenium是基于浏览器的自动化测试工具，但是要写python代码；
 
 考虑到部分测试伙伴python能力不足，因此扩展Selenium，支持通过yaml配置测试步骤;
 
-本框架让伙伴通过编写yaml, 就可以实现一系列复杂的浏览器操作步骤, 如填充表单/提交表单/上传文件/校验响应/提取变量/打印变量等
+本框架让伙伴通过编写yaml, 就可以实现一系列复杂的浏览器操作步骤, 如填充表单/提交表单/上传文件/下载文件/识别验证码/校验响应/提取变量/打印变量等
 
 ## 特性
 1. 基于 selenium 的webdriver
 2. 使用 selenium-requests 扩展来处理post请求与上传请求
-3. 支持通过yaml来配置执行的步骤
-每个步骤可以有多个动作，但单个步骤中动作名不能相同（yaml语法要求;
+3. 支持通过yaml来配置执行的步骤：
+每个步骤可以有多个动作，但单个步骤中动作名不能相同（yaml语法要求）;
 动作代表webdriver上的一种操作，如goto/get/post/upload/submit_form等等;
 4. 支持提取器
 5. 支持校验器
@@ -30,9 +30,15 @@ pip3 install -r requirements.txt
 - # 登录
   goto:
     url: http://admin.jym1.com/login
+  sleep: 5 # 浏览器F12打开开发者模式，切network，打开Preserve log，来监听提交登录验证的请求，以便检查识别的验证码参数是否有问题
+  # 识别验证码, 验证码会写到变量captcha
+  recognize_captcha:
+    url: http://admin.jym1.com/login/verify_image
+  # 提交表单
   submit_form:
     account: '18877310999'
     passwd: '123456'
+    verify_text: $captcha # 验证码
 - # 商品列表
   goto:
     url: http://admin.jym1.com/goods/goods_service_list
@@ -43,7 +49,10 @@ pip3 install -r requirements.txt
   #    goods_id: table>tbody>tr:nth-child(1)>td:nth-child(1) # 第一行第一列
 - # 商品详情
   goto:
-    url: http://admin.jym1.com/goods/goods_info?id=$goods_id&type=2
+    url: http://admin.jym1.com/goods/goods_info?id=$goods_id&type=1
+  download_img_tag:
+    xpath: //img[@class="layui-upload-img"] # 过滤<img>标签的xpath路径， 与css属性只能二选一
+    #css: img.layui-upload-img # 过滤<img>标签的css selector模式， 与xpath属性只能二选一
 - # 新建门店
   goto:
     url: http://admin.jym1.com/store/add_store
@@ -188,6 +197,54 @@ click_by_css: 'button[type=submit]' # 按钮的css selector模式
 12. click_by_xpath: 点击 xpath 指定的按钮
 ```yaml
 click_by_xpath: '//button[@type="submit"]' # 按钮的xpath路径
+```
+
+13. download: 下载文件
+变量`download_file`记录最新下载的单个文件
+```yaml
+download:
+    url: https://img.alicdn.com/tfscom/TB1t84NPuL2gK0jSZPhXXahvXXa.jpg_q90.jpg
+    save_dir: downloads # 保存的目录，默认为 downloads
+    save_file: test.jpg # 保存的文件名，默认为url中最后一级的文件名
+```
+
+14. download_img_tag: 下载单个<img>标签中加载的图片
+变量`download_file`记录最新下载的单个图片
+```yaml
+download_img_tag:
+    xpath: //img[@class="pro-img"] # 过滤<img>标签的xpath路径， 与css属性只能二选一
+    #css: img.pro-img # 过滤<img>标签的css selector模式， 与xpath属性只能二选一
+    save_dir: downloads # 保存的目录，默认为 downloads
+    #save_file: test.jpg # 保存的文件名，默认为url中最后一级的文件名
+```
+
+15. download_img_tags: 下载多个<img>标签中加载的图片
+变量`download_files`记录最新下载的多个图片
+```yaml
+download_img_tags:
+    xpath: '//a[@class="pic J_ImgLoad"]/img'
+    save_dir: downloads
+```
+
+16. recognize_captcha: 识别验证码
+参数同 `download` 动作， 因为内部就是调用 `download`
+变量`captcha`记录识别出来的验证码
+```
+recognize_captcha:
+    url: http://admin.jym1.com/login/verify_image
+    # save_dir: downloads # 保存的目录，默认为 downloads
+    # save_file: test.jpg # 保存的文件名，默认为url中最后一级的文件名
+```
+
+17. recognize_captcha_tag: 识别验证码标签中的验证码
+参数同 `download_img_tag` 动作， 因为内部就是调用 `download_img_tag`
+变量`captcha`记录识别出来的验证码
+```
+recognize_captcha_tag:
+    xpath: //img[@class="pro-img"] # 过滤<img>标签的xpath路径， 与css属性只能二选一
+    #css: img.pro-img # 过滤<img>标签的css selector模式， 与xpath属性只能二选一
+    #save_dir: downloads # 保存的目录，默认为 downloads
+    #save_file: test.jpg # 保存的文件名，默认为url中最后一级的文件名
 ```
 
 ## 校验器

@@ -4,7 +4,10 @@
 import time
 import sys
 import os
-from util import read_yaml, print_exception, set_var, replace_var
+from PIL import Image
+import pytesseract
+import ocr_youdao
+from util import read_yaml, print_exception, set_var, replace_var, random_str
 import extractor
 import validator
 from selenium import webdriver
@@ -28,6 +31,11 @@ class Runner(object):
             'get': self.get,
             'post': self.post,
             'upload': self.upload,
+            'download': self.download,
+            'download_img_tag': self.download_img_tag,
+            'download_img_tags': self.download_img_tags,
+            'recognize_captcha': self.recognize_captcha,
+            'recognize_captcha_tag': self.recognize_captcha_tag,
             'submit_form': self.submit_form,
             'input_by_name': self.input_by_name,
             'input_by_css': self.input_by_css,
@@ -85,6 +93,7 @@ class Runner(object):
         e.run(config)
 
     # 跳转
+    # :param config {url, validate_by_jsonpath, validate_by_css, validate_by_xpath, extract_by_jsonpath, extract_by_css, extract_by_xpath, extract_by_eval}
     def goto(self, config = {}):
         url = config['url']
         url = replace_var(url) # 替换变量
@@ -96,6 +105,7 @@ class Runner(object):
         self._analyze_response(None, config)
 
     # get请求
+    # :param config {url, is_ajax, validate_by_jsonpath, validate_by_css, validate_by_xpath, extract_by_jsonpath, extract_by_css, extract_by_xpath, extract_by_eval}
     def get(self, config = {}):
         url = config['url']
         url = replace_var(url)  # 替换变量
@@ -110,6 +120,7 @@ class Runner(object):
         self._analyze_response(res, config)
 
     # post请求
+    # :param config {url, is_ajax, data, validate_by_jsonpath, validate_by_css, validate_by_xpath, extract_by_jsonpath, extract_by_css, extract_by_xpath, extract_by_eval}
     def post(self, config = {}):
         url = config['url']
         url = replace_var(url)  # 替换变量
@@ -127,16 +138,131 @@ class Runner(object):
         self._analyze_response(res, config)
 
     # 上传文件
+    # :param config {url, files, validate_by_jsonpath, validate_by_css, validate_by_xpath, extract_by_jsonpath, extract_by_css, extract_by_xpath, extract_by_eval}
     def upload(self, config = {}):
-        # 上传请求
         url = config['url']
         url = replace_var(url)  # 替换变量
+        # 文件
         files = {}
         for name, path in config['files'].items():
             files[name] = open(path, 'rb')
+        # 发请求
         res = self.driver.request('POST', url, files=files)
         # 解析响应
         self._analyze_response(res, config)
+
+    # 下载文件
+    # :param config {url, save_file}
+    def download(self, config={}):
+        url = config['url']
+        url = replace_var(url)  # 替换变量
+        # 文件名
+        save_file = self._prepare_save_file(config, url)
+        # 真正的下载
+        self._do_download(url, save_file)
+        return save_file
+
+    # 获得文件名
+    # config['save_dir'] + config['save_file'] 或 url中的文件名
+    def _prepare_save_file(self, config, url):
+        # 获得保存的目录
+        if 'save_dir' in config:
+            save_dir = config['save_dir']
+        else:
+            save_dir = 'downloads'
+        # 获得保存的文件名
+        if 'save_file' in config:
+            save_file = config['save_file']
+        else:
+            save_file = os.path.basename(url)
+        save_file = os.path.abspath(save_dir + os.sep + save_file)  # 转绝对路径
+        # 准备目录
+        dir, name = os.path.split(save_file)
+        if not os.path.exists(dir):
+            os.makedirs(dir)
+        # 检查重复
+        if os.path.exists(save_file):
+            for i in range(100000000000000):
+                if '.' in save_file:
+                    path, ext = save_file.rsplit(".", 1) # 从后面分割，分割为路径+扩展名
+                    newname = f"{path}-{i}.{ext}"
+                else:
+                    newname = f"{save_file}-{i}"
+                if not os.path.exists(newname):
+                    return newname
+            raise Exception('目录太多文件，建议新建目录')
+
+        return save_file
+
+    # 执行下载文件
+    def _do_download(self, url, save_file):
+        # 发请求
+        res = self.driver.request('GET', url)
+        # 保存响应的文件
+        file = open(save_file, 'wb')
+        file.write(res.content)
+        file.close()
+        # 设置变量
+        set_var('download_file', save_file)
+        print(f"下载文件: url为{url}, 另存为{save_file}")
+
+    # 从图片标签中下载图片
+    # :param config {url, css, xpath}
+    def download_img_tag(self, config={}):
+        # 获得img标签
+        img = self._find_by_any(config)
+        # 获得图片url
+        url = img.get_attribute('src')
+
+        # 文件名
+        save_file = self._prepare_save_file(config, url)
+        # 真正的下载
+        self._do_download(url, save_file)
+        return save_file
+
+    # 从图片标签中下载图片
+    # :param config {url, css, xpath}
+    def download_img_tags(self, config={}):
+        # 获得img标签
+        imgs = self._find_all_by_any(config)
+        save_files = [] # 记录多个下载图片
+        for img in imgs:
+            # 获得图片url
+            url = img.get_attribute('src')
+            # 文件名
+            save_file = self._prepare_save_file(config, url)
+            # 真正的下载
+            self._do_download(url, save_file)
+            save_files.append(save_file)
+        # 设置变量
+        set_var('download_files', save_files)
+
+    # 识别url中的验证码
+    def recognize_captcha(self, config={}):
+        # 下载图片
+        file = self.download(config)
+        # 识别验证码
+        self._do_recognize_captcha(file)
+
+    # 识别验证码标签中的验证码
+    def recognize_captcha_tag(self, config={}):
+        # 下载图片
+        file = self.download_img_tag(config)
+        # 识别验证码
+        self._do_recognize_captcha(file)
+
+    # 真正的识别验证码
+    def _do_recognize_captcha(self, file):
+        # 1 使用 pytesseract 识别图片 -- wrong: 默认没训练过的识别不了
+        # img = Image.open(file)
+        # captcha = pytesseract.image_to_string(img)
+        # 2 使用有道ocr
+        captcha = ocr_youdao.recognize_text(file)
+        # 设置变量
+        set_var('captcha', captcha)
+        print(f"识别验证码: 图片为{file}, 验证码为{captcha}")
+        # 删除文件
+        #os.remove(file)
 
     # 提交表单
     def submit_form(self, input_data = {}):
@@ -198,13 +324,14 @@ class Runner(object):
                 js = f"$('input[name={name}]').val('{value}')"
                 self.driver.execute_script(js)
             else:
-                ele.send_keys(value)
+                ele.clear() # 先清空
+                ele.send_keys(value) # 后输入
 
         # 去掉require检查
         # js = '$("[lay-verify]").removeAttr("lay-verify")'
         # self.driver.execute_script(js)
 
-    # 查找元素
+    # 根据指定类型，查找元素
     def _find_by(self, type, path):
         if type == 'name':
             return self.driver.find_element_by_name(path)
@@ -213,6 +340,26 @@ class Runner(object):
         if type == 'xpath':
             return self.driver.find_element_by_xpath(path)
         raise Exception(f"不支持查找类型: {type}")
+
+    # 根据任一类型，查找元素
+    def _find_by_any(self, config):
+        if 'name' in config:
+            return self.driver.find_element_by_name(config['name'])
+        if 'css' in config:
+            return self.driver.find_element_by_css_selector(config['css'])
+        if 'xpath' in config:
+            return self.driver.find_element_by_xpath(config['xpath'])
+        raise Exception(f"没有查找类型: {config}")
+
+    # 根据任一类型，查找元素
+    def _find_all_by_any(self, config):
+        if 'name' in config:
+            return self.driver.find_elements_by_name(config['name'])
+        if 'css' in config:
+            return self.driver.find_elements_by_css_selector(config['css'])
+        if 'xpath' in config:
+            return self.driver.find_elements_by_xpath(config['xpath'])
+        raise Exception(f"没有查找类型: {config}")
 
 if __name__ == '__main__':
     # 浏览器驱动
@@ -224,7 +371,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         step_file = sys.argv[1]
     else:
-        step_file = os.getcwd() + '/step.yml'
+        step_file = os.getcwd() + os.sep + 'step.yml'
     # 执行yaml配置的步骤
     runner.run(step_file)
     driver.quit()
