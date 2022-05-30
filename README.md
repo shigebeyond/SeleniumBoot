@@ -15,6 +15,7 @@ Selenium是基于浏览器的自动化测试工具，但是要写python代码；
 动作代表webdriver上的一种操作，如goto/get/post/upload/submit_form等等;
 4. 支持提取器
 5. 支持校验器
+6. 支持识别验证码(使用有道ocr)
 
 ## todo
 1. 支持更多的动作
