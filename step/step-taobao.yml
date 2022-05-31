@@ -1,0 +1,9 @@
+# 下载美女图
+- # 首页
+  goto:
+    url: https://login.taobao.com/
+  # 提交表单: 有反爬虫
+  submit_form:
+    'fm-login-id': ''
+    'fm-login-password': ''
+  sleep: 100

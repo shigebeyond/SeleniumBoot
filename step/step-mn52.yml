@@ -1,0 +1,8 @@
+# 下载美女图
+- # 首页
+  goto:
+    url: https://www.mn52.com/
+  # 下载多个图片
+  download_img_tags:
+    xpath: '//img[@class="img-responsive"]'
+    save_dir: downloads

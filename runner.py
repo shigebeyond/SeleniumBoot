@@ -4,17 +4,17 @@
 import time
 import sys
 import os
-from PIL import Image
-import pytesseract
-import ocr_youdao
-from util import read_yaml, print_exception, set_var, replace_var, random_str
+from ocr import ocr_youdao
+from util import read_yaml, print_exception, set_var, replace_var
 import extractor
 import validator
-from selenium import webdriver
-from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver import Chrome
+from selenium.webdriver import ChromeOptions
 from seleniumrequests.request import RequestsSessionMixin
 # 整合selenium-requests -- https://libraries.io/pypi/selenium-requests
-class MyWebDriver(RequestsSessionMixin, webdriver.Chrome):
+class MyWebDriver(RequestsSessionMixin, Chrome):
     pass
 
 # selenium基于yaml的执行器
@@ -163,7 +163,7 @@ class Runner(object):
         return save_file
 
     # 获得文件名
-    # config['save_dir'] + config['save_file'] 或 url中的文件名
+    # config['save_dir'] + config['save_file'] 或 url中的默认文件名
     def _prepare_save_file(self, config, url):
         # 获得保存的目录
         if 'save_dir' in config:
@@ -247,20 +247,20 @@ class Runner(object):
     # 识别验证码标签中的验证码
     def recognize_captcha_tag(self, config={}):
         # 下载图片
-        file = self.download_img_tag(config)
+        file_path = self.download_img_tag(config)
         # 识别验证码
-        self._do_recognize_captcha(file)
+        self._do_recognize_captcha(file_path)
 
     # 真正的识别验证码
-    def _do_recognize_captcha(self, file):
+    def _do_recognize_captcha(self, file_path):
         # 1 使用 pytesseract 识别图片 -- wrong: 默认没训练过的识别不了
-        # img = Image.open(file)
+        # img = Image.open(file_path)
         # captcha = pytesseract.image_to_string(img)
         # 2 使用有道ocr
-        captcha = ocr_youdao.recognize_text(file)
+        captcha = ocr_youdao.recognize_text(file_path)
         # 设置变量
         set_var('captcha', captcha)
-        print(f"识别验证码: 图片为{file}, 验证码为{captcha}")
+        print(f"识别验证码: 图片为{file_path}, 验证码为{captcha}")
         # 删除文件
         #os.remove(file)
 
@@ -361,10 +361,95 @@ class Runner(object):
             return self.driver.find_elements_by_xpath(config['xpath'])
         raise Exception(f"没有查找类型: {config}")
 
+    # 最大化窗口
+    def max_window(self):
+        self.driver.maximize_window()
+
+    # 调整窗口大小
+    def resize_window(self, size):
+        wide, high = size.split(",", 1)
+        self.driver.set_window_size(wide, high)
+
+    # 右击按钮
+    def right_click_by_css(self, path):
+        ele = self.driver.find_element_by_css_selector(path)
+        self._do_right_click(ele)
+
+    # 右击按钮
+    def right_click_by_xpath(self, path):
+        ele = self.driver.find_element_by_xpath(path)
+        self._do_right_click(ele)
+
+    def _do_right_click(self, ele):
+        ActionChains(self.driver).context_click(ele).perform()
+
+    # 双击按钮
+    def double_click_by_css(self, path):
+        ele = self.driver.find_element_by_css_selector(path)
+        self._do_double_click(ele)
+
+    # 双击按钮
+    def double_click_by_xpath(self, path):
+        ele = self.driver.find_element_by_xpath(path)
+        self._do_double_click(ele)
+
+    def _do_right_click(self, ele):
+        ActionChains(self.driver).double_click(ele).perform()
+
+    # 点击弹框的确定按钮
+    def alert_accept(self):
+        self.driver.switch_to.alert.accept()
+
+    # 取消弹框
+    def alert_dismiss(self):
+        self.driver.switch_to.alert.dismiss()
+        return self
+
+    # 双击按钮
+    def double_click_by_css(self, path):
+        ele = self.driver.find_element_by_css_selector(path)
+        self._do_double_click(ele)
+
+    # 双击按钮
+    def double_click_by_xpath(self, path):
+        ele = self.driver.find_element_by_xpath(path)
+        self._do_double_click(ele)
+
+    # 切换进入iframe
+    def switch_to_frame(self):
+        self.driver.switch_to.frame(elem)
+
+    # 跳回到主框架页
+    def switch_to_frame_out(self):
+        self.driver.switch_to.default_content()
+        return self
+
+    # 切到某个窗口
+    def switch_to_window(self, window: int):
+        handle = self.driver.window_handles[window]
+        self.driver.switch_to.window(handle)
+
+    # 截图存为png
+    # :param config {url, save_file}
+    def screenshots(self, config):
+        # 文件名
+        default_file = str(time.time()).split(".")[0] + ".png"
+        save_file = self._prepare_save_file(config, default_file)
+        self.driver.save_screenshot(save_file)
+
+    # 截图存为png
+    def element_screenshot(self, config):
+        # 文件名
+        default_file = str(time.time()).split(".")[0] + ".png"
+        save_file = self._prepare_save_file(config, default_file)
+        elem.screenshot(save_file)
+
 if __name__ == '__main__':
     # 浏览器驱动
-    #driver = webself.driver.Chrome()
-    driver = MyWebDriver()
+    option = ChromeOptions()
+    option.add_experimental_option('excludeSwitches', ['enable-automation'])
+    #driver = Chrome(options=option)
+    driver = MyWebDriver(options=option)
     # 基于yaml的执行器
     runner = Runner(driver)
     # 步骤配置的yaml

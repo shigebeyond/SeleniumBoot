@@ -1,0 +1,8 @@
+# 下载美女图
+- # 首页
+  goto:
+    url: https://pic.netbian.com/4kmeinv/index.html
+  # 下载多个图片
+  download_img_tags:
+    xpath: '//ul[@class="clearfix"]/li/a/img'
+    #save_dir: downloads # 默认downloads，可不填
