@@ -3,6 +3,6 @@
   goto:
     url: https://www.mn52.com/
   # 下载多个图片
-  download_img_tags:
+  download_img_tags_by:
     xpath: '//img[@class="img-responsive"]'
     save_dir: downloads

@@ -7,7 +7,7 @@
     extract_by_xpath:
       detail_url: //div[@class="item-box"][1]/a/@href # 详情页连接
   # 下载多个图片
-  download_img_tags:
+  download_img_tags_by:
     xpath: '//a[@class="pic J_ImgLoad"]/img'
     save_dir: downloads
 - # 详情页
@@ -22,7 +22,7 @@
     save_file: test.jpg # 保存的文件名
   print: "下载文件 -- $download_file"
 - # 下载图片
-  download_img_tag:
+  download_img_tag_by:
     xpath: //img[@class="pro-img"] # 过滤<img>标签的xpath路径， 与css属性只能二选一
     #css: img.pro-img # 过滤<img>标签的css selector模式， 与xpath属性只能二选一
   print: "下载文件 -- $download_file"

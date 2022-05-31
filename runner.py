@@ -8,6 +8,8 @@ from ocr import ocr_youdao
 from util import read_yaml, print_exception, set_var, replace_var
 import extractor
 import validator
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.select import Select
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver import Chrome
@@ -32,16 +34,31 @@ class Runner(object):
             'post': self.post,
             'upload': self.upload,
             'download': self.download,
-            'download_img_tag': self.download_img_tag,
-            'download_img_tags': self.download_img_tags,
+            'download_img_tag_by': self.download_img_tag_by,
+            'download_img_tags_by': self.download_img_tags_by,
             'recognize_captcha': self.recognize_captcha,
             'recognize_captcha_tag': self.recognize_captcha_tag,
             'submit_form': self.submit_form,
             'input_by_name': self.input_by_name,
             'input_by_css': self.input_by_css,
             'input_by_xpath': self.input_by_xpath,
-            'click_by_css': self.click_by_css,
-            'click_by_xpath': self.click_by_xpath,
+            'click_by': self.click_by,
+            'right_click_by': self.right_click_by,
+            'double_click_by': self.double_click_by,
+            'alert_accept': self.alert_accept,
+            'alert_dismiss': self.alert_dismiss,
+            'max_window': self.max_window,
+            'resize_window': self.resize_window,
+            'switch_to_frame_by': self.switch_to_frame_by,
+            'switch_to_frame_out': self.switch_to_frame_out,
+            'switch_to_window': self.switch_to_window,
+            'screenshot': self.screenshot,
+            'screenshot_tag_by': self.screenshot_tag_by,
+            'execute_js': self.execute_js,
+            'scroll': self.scroll,
+            'scroll_top': self.scroll_top,
+            'scroll_bottom': self.scroll_bottom,
+            'refresh': self.refresh,
         }
 
     '''
@@ -152,7 +169,7 @@ class Runner(object):
         self._analyze_response(res, config)
 
     # 下载文件
-    # :param config {url, save_file}
+    # :param config {url, save_dir, save_file}
     def download(self, config={}):
         url = config['url']
         url = replace_var(url)  # 替换变量
@@ -207,8 +224,8 @@ class Runner(object):
         print(f"下载文件: url为{url}, 另存为{save_file}")
 
     # 从图片标签中下载图片
-    # :param config {url, css, xpath}
-    def download_img_tag(self, config={}):
+    # :param config {css, xpath}
+    def download_img_tag_by(self, config={}):
         # 获得img标签
         img = self._find_by_any(config)
         # 获得图片url
@@ -221,8 +238,8 @@ class Runner(object):
         return save_file
 
     # 从图片标签中下载图片
-    # :param config {url, css, xpath}
-    def download_img_tags(self, config={}):
+    # :param config {css, xpath}
+    def download_img_tags_by(self, config={}):
         # 获得img标签
         imgs = self._find_all_by_any(config)
         save_files = [] # 记录多个下载图片
@@ -247,7 +264,7 @@ class Runner(object):
     # 识别验证码标签中的验证码
     def recognize_captcha_tag(self, config={}):
         # 下载图片
-        file_path = self.download_img_tag(config)
+        file_path = self.download_img_tag_by(config)
         # 识别验证码
         self._do_recognize_captcha(file_path)
 
@@ -273,15 +290,7 @@ class Runner(object):
         #self.driver.find_element_by_xpath('//button[@type="submit"]').click() # 点击提交按钮 -- 有效
         # 可以是 input[type=submit] 或 button[type=submit]
         #self.driver.find_element_by_css_selector('[type=submit]').click() # 点击提交按钮 -- 有效
-        self.click_by_css('[type=submit]')
-
-    # 点击按钮
-    def click_by_css(self, path):
-        self.driver.find_element_by_css_selector(path).click()
-
-    # 点击按钮
-    def click_by_xpath(self, path):
-        self.driver.find_element_by_xpath(path).click()
+        self.click_by({'css':'[type=submit]'})
 
     # 根据name来填充输入框
     # :param input_data 表单数据, key是输入框的name, value是填入的值
@@ -314,86 +323,70 @@ class Runner(object):
                 print_exception(str(ex))
                 continue
 
-            # 设置输入框
-            # hidden input调用send_keys()报错：selenium.common.exceptions.ElementNotInteractableException: Message: element not interactable
-            # https://www.cnblogs.com/qican/p/14037564.html
-            if ele.tag_name == 'select':
-                js = f"$('select[name={name}]')[0].selectedIndex = '{value}'"
-                self.driver.execute_script(js)
-            elif ele.get_attribute('type') == "hidden":
-                js = f"$('input[name={name}]').val('{value}')"
-                self.driver.execute_script(js)
+            if ele.tag_name == 'select': # 设置输入框
+                # js = f"$('select[name={name}]')[0].selectedIndex = '{value}'"
+                # self.driver.execute_script(js)
+                Select(ele).select_by_value(value)
+            elif ele.get_attribute('type') == "hidden": # 设置隐藏域
+                # hidden input调用send_keys()报错：selenium.common.exceptions.ElementNotInteractableException: Message: element not interactable
+                # https://www.cnblogs.com/qican/p/14037564.html
+                #js = f"$('input[name={name}]').val('{value}')" # jquery
+                js = f"arguments[0].value = '{value}'" # 原生js
+                self.driver.execute_script(js, ele)
             else:
                 ele.clear() # 先清空
                 ele.send_keys(value) # 后输入
 
-        # 去掉require检查
-        # js = '$("[lay-verify]").removeAttr("lay-verify")'
-        # self.driver.execute_script(js)
+    # 类型转by
+    def type2by(self, type):
+        if type == 'id':
+            return By.ID
+        if type == 'name':
+            return By.NAME
+        if type == 'css':
+            return By.CSS_SELECTOR
+        if type == 'xpath':
+            return By.XPATH
+        raise Exception(f"不支持查找类型: {type}")
 
     # 根据指定类型，查找元素
     def _find_by(self, type, path):
-        if type == 'name':
-            return self.driver.find_element_by_name(path)
-        if type == 'css':
-            return self.driver.find_element_by_css_selector(path)
-        if type == 'xpath':
-            return self.driver.find_element_by_xpath(path)
-        raise Exception(f"不支持查找类型: {type}")
+        return self.driver.find_element(self.type2by(type), path)
 
     # 根据任一类型，查找元素
     def _find_by_any(self, config):
-        if 'name' in config:
-            return self.driver.find_element_by_name(config['name'])
-        if 'css' in config:
-            return self.driver.find_element_by_css_selector(config['css'])
-        if 'xpath' in config:
-            return self.driver.find_element_by_xpath(config['xpath'])
+        types = ['id', 'name', 'css', 'xpath']
+        for type in types:
+            if type in config:
+                path = config[type]
+                return self.driver.find_element(self.type2by(type), path)
         raise Exception(f"没有查找类型: {config}")
 
     # 根据任一类型，查找元素
     def _find_all_by_any(self, config):
-        if 'name' in config:
-            return self.driver.find_elements_by_name(config['name'])
-        if 'css' in config:
-            return self.driver.find_elements_by_css_selector(config['css'])
-        if 'xpath' in config:
-            return self.driver.find_elements_by_xpath(config['xpath'])
+        types = ['id', 'name', 'css', 'xpath']
+        for type in types:
+            if type in config:
+                path = config[type]
+                return self.driver.find_elements(self.type2by(type), path)
         raise Exception(f"没有查找类型: {config}")
 
-    # 最大化窗口
-    def max_window(self):
-        self.driver.maximize_window()
-
-    # 调整窗口大小
-    def resize_window(self, size):
-        wide, high = size.split(",", 1)
-        self.driver.set_window_size(wide, high)
+    # 点击按钮
+    # :param config {css, xpath}
+    def click_by(self, config):
+        ele = self._find_by_any(config)
+        ele.click()
 
     # 右击按钮
-    def right_click_by_css(self, path):
-        ele = self.driver.find_element_by_css_selector(path)
-        self._do_right_click(ele)
-
-    # 右击按钮
-    def right_click_by_xpath(self, path):
-        ele = self.driver.find_element_by_xpath(path)
-        self._do_right_click(ele)
-
-    def _do_right_click(self, ele):
+    # :param config {css, xpath}
+    def right_click_by(self, config):
+        ele = self._find_by_any(config)
         ActionChains(self.driver).context_click(ele).perform()
 
     # 双击按钮
-    def double_click_by_css(self, path):
-        ele = self.driver.find_element_by_css_selector(path)
-        self._do_double_click(ele)
-
-    # 双击按钮
-    def double_click_by_xpath(self, path):
-        ele = self.driver.find_element_by_xpath(path)
-        self._do_double_click(ele)
-
-    def _do_right_click(self, ele):
+    # :param config {css, xpath}
+    def double_click_by(self, config):
+        ele = self._find_by_any(config)
         ActionChains(self.driver).double_click(ele).perform()
 
     # 点击弹框的确定按钮
@@ -403,46 +396,73 @@ class Runner(object):
     # 取消弹框
     def alert_dismiss(self):
         self.driver.switch_to.alert.dismiss()
-        return self
 
-    # 双击按钮
-    def double_click_by_css(self, path):
-        ele = self.driver.find_element_by_css_selector(path)
-        self._do_double_click(ele)
+    # 最大化窗口
+    def max_window(self):
+        self.driver.maximize_window()
 
-    # 双击按钮
-    def double_click_by_xpath(self, path):
-        ele = self.driver.find_element_by_xpath(path)
-        self._do_double_click(ele)
+    # 调整窗口大小
+    def resize_window(self, size):
+        width, hight = size.split(",", 1)
+        self.driver.set_window_size(width, hight)
 
     # 切换进入iframe
-    def switch_to_frame(self):
-        self.driver.switch_to.frame(elem)
+    # :param config {css, xpath}
+    def switch_to_frame_by(self, config):
+        ele = self._find_by_any(config)
+        self.driver.switch_to.frame(ele)
 
     # 跳回到主框架页
     def switch_to_frame_out(self):
         self.driver.switch_to.default_content()
-        return self
 
-    # 切到某个窗口
+    # 切到第几个窗口
     def switch_to_window(self, window: int):
         handle = self.driver.window_handles[window]
         self.driver.switch_to.window(handle)
 
-    # 截图存为png
-    # :param config {url, save_file}
-    def screenshots(self, config):
+    # 整个窗口截图存为png
+    # :param config {save_dir, save_file}
+    def screenshot(self, config):
         # 文件名
         default_file = str(time.time()).split(".")[0] + ".png"
         save_file = self._prepare_save_file(config, default_file)
         self.driver.save_screenshot(save_file)
 
-    # 截图存为png
-    def element_screenshot(self, config):
+    # 对某个标签截图存为png
+    # :param config {css, xpath, save_dir, save_file}
+    def screenshot_tag_by(self, config):
+        ele = self._find_by_any(config)
         # 文件名
-        default_file = str(time.time()).split(".")[0] + ".png"
+        default_file = str(time.time()).split(".")[0] + ".png" # 默认文件名
         save_file = self._prepare_save_file(config, default_file)
-        elem.screenshot(save_file)
+        ele.screenshot(save_file)
+
+    # 执行js
+    def execute_js(self, js):
+        self.driver.execute_script(js)
+
+    # 滚动到指定位置
+    def scroll(self, pos):
+        x, y = pos.split(",", 1)
+        self._do_scroll_to(x, y)
+
+    # 滚动到顶部
+    def scroll_top(self):
+        self._do_scroll_to(0, 0)
+
+    # 滚动到底部
+    def scroll_bottom(self):
+        self._do_scroll_to(0, 'document.body.scrollHeight')
+
+    # 滚动到底部
+    def _do_scroll_to(self, x, y):
+        js = f'window.scrollTo({x}, {y})'
+        self.execute_js(js)
+
+    # 刷新网页
+    def refresh(self):
+        self.driver.refresh()
 
 if __name__ == '__main__':
     # 浏览器驱动

@@ -51,7 +51,7 @@ pip3 install -r requirements.txt
 - # 商品详情
   goto:
     url: http://admin.jym1.com/goods/goods_info?id=$goods_id&type=1
-  download_img_tag:
+  download_img_tag_by:
     xpath: //img[@class="layui-upload-img"] # 过滤<img>标签的xpath路径， 与css属性只能二选一
     #css: img.layui-upload-img # 过滤<img>标签的css selector模式， 与xpath属性只能二选一
 - # 新建门店
@@ -161,7 +161,7 @@ upload: # 上传文件/图片
 ```
 
 7. submit_form: 提交表单
-是 `input_by_name` 与 `click_by_css('[type=submit]')` 的结合
+是 `input_by_name` 与 `click_by({'css':'[type=submit]'})` 的结合
 ```yaml
 submit_form:
   # 输入框name: 填充的值(支持写变量)
@@ -190,17 +190,7 @@ input_by_xpath:
   "//input[@id='account']": '18877310999'
 ```
 
-11. click_by_css: 点击 css selector 指定的按钮
-```yaml
-click_by_css: 'button[type=submit]' # 按钮的css selector模式
-```
-
-12. click_by_xpath: 点击 xpath 指定的按钮
-```yaml
-click_by_xpath: '//button[@type="submit"]' # 按钮的xpath路径
-```
-
-13. download: 下载文件
+11. download: 下载文件
 变量`download_file`记录最新下载的单个文件
 ```yaml
 download:
@@ -209,25 +199,25 @@ download:
     save_file: test.jpg # 保存的文件名，默认为url中最后一级的文件名
 ```
 
-14. download_img_tag: 下载单个<img>标签中加载的图片
+12. download_img_tag_by: 下载单个<img>标签中加载的图片
 变量`download_file`记录最新下载的单个图片
 ```yaml
-download_img_tag:
-    xpath: //img[@class="pro-img"] # 过滤<img>标签的xpath路径， 与css属性只能二选一
-    #css: img.pro-img # 过滤<img>标签的css selector模式， 与xpath属性只能二选一
+download_img_tag_by:
+    xpath: //img[@class="pro-img"] # 过滤<img>标签的xpath路径，与css属性只能二选一
+    #css: img.pro-img # 过滤<img>标签的css selector模式，与xpath属性只能二选一
     save_dir: downloads # 保存的目录，默认为 downloads
     #save_file: test.jpg # 保存的文件名，默认为url中最后一级的文件名
 ```
 
-15. download_img_tags: 下载多个<img>标签中加载的图片
+13. download_img_tags_by: 下载多个<img>标签中加载的图片
 变量`download_files`记录最新下载的多个图片
 ```yaml
-download_img_tags:
+download_img_tags_by:
     xpath: '//a[@class="pic J_ImgLoad"]/img'
     save_dir: downloads
 ```
 
-16. recognize_captcha: 识别验证码
+14. recognize_captcha: 识别验证码
 参数同 `download` 动作， 因为内部就是调用 `download`
 变量`captcha`记录识别出来的验证码
 ```
@@ -237,8 +227,8 @@ recognize_captcha:
     # save_file: test.jpg # 保存的文件名，默认为url中最后一级的文件名
 ```
 
-17. recognize_captcha_tag: 识别验证码标签中的验证码
-参数同 `download_img_tag` 动作， 因为内部就是调用 `download_img_tag`
+15. recognize_captcha_tag: 识别验证码标签中的验证码
+参数同 `download_img_tag_by` 动作， 因为内部就是调用 `download_img_tag_by`
 变量`captcha`记录识别出来的验证码
 ```
 recognize_captcha_tag:
@@ -246,6 +236,105 @@ recognize_captcha_tag:
     #css: img.pro-img # 过滤<img>标签的css selector模式， 与xpath属性只能二选一
     #save_dir: downloads # 保存的目录，默认为 downloads
     #save_file: test.jpg # 保存的文件名，默认为url中最后一级的文件名
+```
+
+16. click_by: 点击指定的按钮
+```yaml
+click_by:
+  css: 'button[type=submit]' # 按钮的css selector模式，与xpath属性只能二选一
+  #xpath: '//button[@type="submit"]' # 按钮的xpath路径，与css属性只能二选一
+```
+
+17. right_click_by: 右击指定的按钮
+```yaml
+right_click_by:
+  css: 'button[type=submit]' # 按钮的css selector模式，与xpath属性只能二选一
+  #xpath: '//button[@type="submit"]' # 按钮的xpath路径，与css属性只能二选一
+```
+
+18. double_click_by: 双击指定的按钮
+```yaml
+double_click_by:
+  css: 'button[type=submit]' # 按钮的css selector模式，与xpath属性只能二选一
+  #xpath: '//button[@type="submit"]' # 按钮的xpath路径，与css属性只能二选一
+```
+
+19. alert_accept: 点击弹框的确定按钮
+```yaml
+alert_accept: 
+```
+
+20. alert_dismiss: 取消弹框
+```yaml
+alert_dismiss: 
+```
+
+21. max_window: 最大化窗口
+```yaml
+max_window: 
+```
+
+22. resize_window: 调整窗口大小
+```yaml
+resize_window: 100,200 # 宽,高
+```
+
+23. switch_to_frame_by: 切换进入iframe
+```yaml
+switch_to_frame_by:
+  css: 'iframe#main' # iframe的css selector模式，与xpath属性只能二选一
+  #xpath: '//iframe[@id="main"]' # iframe的xpath路径，与css属性只能二选一
+```
+
+24. switch_to_frame_out: 跳回到主框架页
+```yaml
+switch_to_frame_out: 
+```
+
+25. switch_to_window: 切到第几个窗口
+```yaml
+switch_to_window: 1 # 切到第1个窗口
+```
+
+26. screenshot: 整个窗口截图存为png
+```yaml
+screenshot:
+    save_dir: downloads # 保存的目录，默认为 downloads
+    save_file: test.png # 保存的文件名，默认为:时间戳.png
+```
+
+27. screenshot_tag_by: 对某个标签截图存为png
+```yaml
+screenshot_tag_by
+    css: 'iframe#main' # iframe的css selector模式，与xpath属性只能二选一
+    #xpath: '//iframe[id="main"]' # iframe的xpath路径，与css属性只能二选一
+    save_dir: downloads # 保存的目录，默认为 downloads
+    save_file: test.png # 保存的文件名，默认为:时间戳.png
+```
+
+28. execute_js: 执行js
+```yaml
+execute_js: alert('hello world')
+```
+
+29. scroll: 滚动到指定位置
+```yaml
+scroll: 100,200
+```
+
+30. scroll_top: 滚动到顶部
+```yaml
+scroll_top: 
+```
+
+31. scroll_bottom: 滚动到底部
+```yaml
+scroll_bottom: 
+```
+
+32. refresh: 刷新网页
+```yaml
+refresh: 
 ```
 
 ## 校验器
