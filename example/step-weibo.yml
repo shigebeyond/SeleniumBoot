@@ -1,0 +1,27 @@
+-
+  # 包含其他步骤文件，如记录公共的步骤，或记录配置数据(如用户名密码)
+  include: step-common.yml
+  # 打印所有变量
+  print_vars:
+  # 首页
+  goto:
+    url: https://weibo.com/
+  sleep: 5
+  # 循环3次
+  for(3) :
+    # 每次迭代要执行的子步骤
+    - scroll_bottom:
+      sleep: 2
+  # 无限循环，直到遇到跳出动作
+  # 有变量for_i记录是第几次迭代
+  for:
+    # 每次迭代要执行的子步骤
+    - break_if: for_i>2 # 满足条件则跳出循环
+      scroll_bottom:
+      sleep: 2
+  # 只执行一次，等价于 for(1)
+  once:
+    # 每次迭代要执行的子步骤
+    - moveon_if: for_i<=2 # 满足条件则往下走，否则跳出循环
+      scroll_bottom:
+      sleep: 2

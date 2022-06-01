@@ -6,6 +6,10 @@
     url: http://list.shikee.com/list-${incr(1)}.html # 第1页
     extract_by_xpath:
       detail_url: //div[@class="item-box"][1]/a/@href # 详情页连接
+  scroll_bottom:
+  sleep: 3
+- refresh:
+  sleep: 3
 - goto:
     url: http://list.shikee.com/list-${incr(1)}.html # 第2页
     extract_by_xpath:

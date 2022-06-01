@@ -1,0 +1,6 @@
+-
+  # 设置变量
+  set_vars:
+    name: shi
+    password: 123456
+    birthday: 5-27

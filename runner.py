@@ -6,6 +6,7 @@ import sys
 import os
 from ocr import ocr_youdao
 from util import read_yaml, print_exception, set_var, replace_var
+import util
 import extractor
 import validator
 from selenium.webdriver.common.by import By
@@ -19,12 +20,19 @@ from seleniumrequests.request import RequestsSessionMixin
 class MyWebDriver(RequestsSessionMixin, Chrome):
     pass
 
+# 跳出循环的异常
+class BreakException(Exception):
+    def __init__(self, condition):
+        self.condition = condition # 跳转条件
+
 # selenium基于yaml的执行器
 class Runner(object):
 
     def __init__(self, driver: MyWebDriver):
         # webdriver
         self.driver = driver
+        # 步骤文件所在的目录
+        self.step_dir = None
         # 已下载过的url对应的文件，key是url，value是文件
         self.downloaded_files = {}
         # 动作映射函数
@@ -61,6 +69,13 @@ class Runner(object):
             'scroll_top': self.scroll_top,
             'scroll_bottom': self.scroll_bottom,
             'refresh': self.refresh,
+            'for': self.do_for,
+            'once': self.once,
+            'break_if': self.break_if,
+            'moveon_if': self.moveon_if,
+            'include': self.include,
+            'set_vars': self.set_vars,
+            'print_vars': self.print_vars,
         }
 
     '''
@@ -68,9 +83,21 @@ class Runner(object):
     :param step_file 步骤配置文件路径
     '''
     def run(self, step_file):
+        # 获得步骤文件的绝对路径
+        if self.step_dir == None:
+            step_file = os.path.abspath(step_file)
+            self.step_dir = os.path.dirname(step_file)
+        else:
+            step_file = self.step_dir + os.sep + step_file
+
+        print(f"加载并执行步骤文件: {step_file}")
         # 获得步骤
         steps = read_yaml(step_file)
+        # 执行多个步骤
+        self.run_steps(steps)
 
+    # 执行多个步骤
+    def run_steps(self, steps):
         # 逐个步骤调用多个动作
         for step in steps:
             for action, param in step.items():
@@ -82,15 +109,67 @@ class Runner(object):
     :param param 参数
     '''
     def run_action(self, action, param):
+        if 'for(' in action:
+            n = int(action[4:-1])
+            self.do_for(param, n)
+            return
+
         if action not in self.actions:
-            print_exception(f'无效动作: {action}')
-            exit()
+            raise Exception(f'无效动作: {action}')
+
         # 调用动作对应的函数
         print(f"处理动作: {action}={param}")
         func = self.actions[action]
         func(param)
 
     # --------- 动作处理的函数 --------
+    # for循环
+    # :param steps 每个迭代中要执行的步骤
+    # :param n 循环次数
+    def do_for(self, steps, n = None):
+        label = f"for({n})"
+        if n == None:
+            n = sys.maxsize # 最大int，等于无限循环次数
+            label = f"for(∞)"
+        print(f"-- 开始循环: {label} -- ")
+        try:
+            for i in range(n):
+                print(f"第{i}次迭代")
+                set_var('for_i', i)
+                self.run_steps(steps)
+        except BreakException as e:  # 跳出循环
+            print(f"-- 跳出循环: {label}, 跳出条件: {e.condition} -- ")
+        else:
+            print(f"-- 结束循环: {label} -- ")
+
+    # 执行一次子步骤，相当于 for(1)
+    def once(self, steps):
+        self.do_for(steps, 1)
+
+    # 检查并继续for循环
+    def moveon_if(self, expr):
+        # break_if(条件取反)
+        self.break_if(f"not ({expr})")
+
+    # 跳出for循环
+    def break_if(self, expr):
+        val = eval(expr, globals(), util.vars)  # 丢失本地与全局变量, 如引用不了json模块
+        if bool(val):
+            raise BreakException(expr)
+
+    # 加载并执行其他步骤文件
+    def include(self, step_file):
+        self.run(step_file)
+
+    # 设置变量
+    def set_vars(self, vars):
+        for k, v in vars.items():
+            set_var(k, v)
+
+    # 打印变量
+    def print_vars(self, _):
+        print(f"打印变量: {util.vars}")
+
     # 睡眠
     def sleep(self, seconds):
         time.sleep(seconds)
@@ -397,15 +476,15 @@ class Runner(object):
         ActionChains(self.driver).double_click(ele).perform()
 
     # 点击弹框的确定按钮
-    def alert_accept(self):
+    def alert_accept(self, _):
         self.driver.switch_to.alert.accept()
 
     # 取消弹框
-    def alert_dismiss(self):
+    def alert_dismiss(self, _):
         self.driver.switch_to.alert.dismiss()
 
     # 最大化窗口
-    def max_window(self):
+    def max_window(self, _):
         self.driver.maximize_window()
 
     # 调整窗口大小
@@ -420,7 +499,7 @@ class Runner(object):
         self.driver.switch_to.frame(ele)
 
     # 跳回到主框架页
-    def switch_to_frame_out(self):
+    def switch_to_frame_out(self, _):
         self.driver.switch_to.default_content()
 
     # 切到第几个窗口
@@ -455,11 +534,11 @@ class Runner(object):
         self._do_scroll_to(x, y)
 
     # 滚动到顶部
-    def scroll_top(self):
+    def scroll_top(self, _):
         self._do_scroll_to(0, 0)
 
     # 滚动到底部
-    def scroll_bottom(self):
+    def scroll_bottom(self, _):
         self._do_scroll_to(0, 'document.body.scrollHeight')
 
     # 滚动到底部
@@ -468,7 +547,7 @@ class Runner(object):
         self.execute_js(js)
 
     # 刷新网页
-    def refresh(self):
+    def refresh(self, _):
         self.driver.refresh()
 
 if __name__ == '__main__':
@@ -483,7 +562,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         step_file = sys.argv[1]
     else:
-        step_file = os.getcwd() + os.sep + 'step.yml'
+        step_file = 'step.yml'
     # 执行yaml配置的步骤
     runner.run(step_file)
     driver.quit()
