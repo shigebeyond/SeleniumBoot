@@ -391,13 +391,13 @@ once:
 35. break_if: 满足条件则跳出循环; 
 只能定义在for循环的子步骤中
 ```yaml
-break_if: for_i>2
+break_if: for_i>2 # 条件表达式，python语法
 ```
 
 36. moveon_if: 满足条件则往下走，否则跳出循环; 
 只能定义在for循环的子步骤中
 ```yaml
-moveon_if: for_i<=2
+moveon_if: for_i<=2 # 条件表达式，python语法
 ```
 
 37. include: 包含其他步骤文件，如记录公共的步骤，或记录配置数据(如用户名密码); 
@@ -493,6 +493,6 @@ extract_by_jsonpath:
 使用 `eval(表达式)` 执行表达式, 并将执行结果记录到变量中
 ```yaml
 extract_by_eval:
-    # 变量名: 表达式
+    # 变量名: 表达式（python语法）
     dyn_data: "json.loads(response.text[16:-1])" # 变量response是响应对象
 ```

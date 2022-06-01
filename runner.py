@@ -164,6 +164,7 @@ class Runner(object):
     # 设置变量
     def set_vars(self, vars):
         for k, v in vars.items():
+            v = replace_var(v)  # 替换变量
             set_var(k, v)
 
     # 打印变量
