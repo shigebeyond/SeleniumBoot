@@ -70,14 +70,14 @@ pip3 install -r requirements.txt
     is_ajax: true
     data: # post的参数
       # 参数名:参数值
-      store_name: teststore-$random_str6
+      store_name: teststore-${random_str(6)}
       store_logo_url: '$img'
       store_img_urls: '["$img"]'
       province: 450000
       city: 450100
       district: 450102
       address: testadd
-      phone: 1347115$random_int4
+      phone: 1347115${random_int(4)}
       business_day_from: 1
       business_day_to: 1
       work_start_time: 09:00:00 - 20:00:00
@@ -110,7 +110,7 @@ python runner.py 步骤配置文件
 sleep: 2 # 线程睡眠2秒
 ```
 
-2. print: 打印, 支持输出变量
+2. print: 打印, 支持输出变量/函数
 ```yaml
 # 调试打印
 print: "总申请数=${dyn_data.total_apply}, 剩余份数=${dyn_data.quantity_remain}"
@@ -120,6 +120,18 @@ print: "总申请数=${dyn_data.total_apply}, 剩余份数=${dyn_data.quantity_r
 ```
 $msg 一级变量, 以$为前缀
 ${data.msg} 多级变量, 用 ${ 与 } 包含
+```
+
+函数格式:
+```
+${random_str(6)} 支持调用函数，目前仅支持3个函数: random_str/random_int/incr
+```
+
+函数列表
+```
+random_str(n): 随机字符串，参数n是字符个数
+random_int(n): 随机数字，参数n是数字个数
+incr(key): 自增值，从1开始，参数key表示不同的自增值，不同key会独立自增
 ```
 
 3. goto: 浏览器跳转
@@ -145,7 +157,7 @@ post:
     is_ajax: true
     data: # post的参数
       # 参数名:参数值
-      store_name: teststore-$random_str6
+      store_name: teststore-${random_str(6)}
       store_logo_url: '$img'
 ```
 

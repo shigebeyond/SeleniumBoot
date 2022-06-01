@@ -7,9 +7,6 @@ import re
 import random
 from jsonpath import jsonpath
 
-# 变量
-vars = {}
-
 # 读yaml配置
 # :param yaml_file (步骤配置的)yaml文件
 def read_yaml(yaml_file):
@@ -22,6 +19,38 @@ def read_yaml(yaml_file):
 def print_exception(ex):
     print('\033[31m发生异常: ' + str(ex) + '\033[0m')
 
+# 生成一个指定长度的随机字符串
+def random_str(n):
+    n = int(n)
+    random_str = ''
+    base_str = 'ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz0123456789'
+    length = len(base_str) - 1
+    for i in range(n):
+        random_str += base_str[random.randint(0, length)]
+    return random_str
+
+
+# 生成一个指定长度的随机数字
+def random_int(n):
+    n = int(n)
+    random_str = ''
+    for i in range(n):
+        random_str += str(random.randint(0, 9))
+    return random_str
+
+# 自增的值
+incr_vals = {}
+
+# 自增
+def incr(key):
+    if key not in incr_vals:
+        incr_vals[key] = 0
+    incr_vals[key] = incr_vals[key] + 1
+    return incr_vals[key]
+
+# 变量
+vars = {}
+
 # 设置变量
 def set_var(name, val):
     vars[name] = val
@@ -30,34 +59,43 @@ def set_var(name, val):
 def replace_var(txt):
     if isinstance(txt, int) or isinstance(txt, float):
         return txt
-    # https://cloud.tencent.com/developer/article/1774589
+
+    # re正则匹配替换字符串 https://cloud.tencent.com/developer/article/1774589
     def replace(match) -> str:
         name = match.group(1)
-        if name.startswith('random_str'):
-            len = int(name[10:])
-            return random_str(len)
-        if name.startswith('random_int'):
-            len = int(name[10:])
-            return random_int(len)
-        if '.' in name: # 有多级属性, 如 data.msg
+        # 单独处理
+        if '(' in name:  # 函数调用, 如 random_str(1)
+            r = parse_and_call_func(name)
+            return str(r)
+        if '.' in name:  # 有多级属性, 如 data.msg
             return jsonpath(vars, '$.' + name)[0]
         return vars[name]
-    txt = re.sub(r'\$([\w\d_]+)', replace, txt) # 处理变量 $msg
-    txt = re.sub(r'\$\{([\w\d_\.]+)\}', replace, txt) # 处理变量 ${data.msg}
+
+    txt = re.sub(r'\$([\w\d_]+)', replace, txt)  # 处理变量 $msg
+    txt = re.sub(r'\$\{([\w\d_\.\(\)]+)\}', replace, txt)  # 处理变量 ${data.msg} 或 函数调用 ${random_str(1)}
     return txt
 
-# 生成一个指定长度的随机字符串
-def random_str(n):
-  random_str =''
-  base_str ='ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz0123456789'
-  length =len(base_str) -1
-  for i in range(n):
-    random_str +=base_str[random.randint(0, length)]
-  return random_str
+# 替换变量时用到的内部函数
+funcs = {
+    'random_str': random_str,
+    'random_int': random_int,
+    'incr': incr
+}
 
-# 生成一个指定长度的随机数字
-def random_int(n):
-  random_str =''
-  for i in range(n):
-    random_str += str(random.randint(0, 9))
-  return random_str
+# 解析并调用函数
+def parse_and_call_func(expr):
+    mat = re.match(r'([\w\d_]+)\((.+)\)', expr)
+    if mat == None:
+        raise Exception("不符合函数调用语法: " + expr)
+
+    # 函数名
+    func = mat.group(1)
+    if func not in funcs:
+        raise Exception(f'无效校验函数: {func}')
+
+    # 函数参数
+    param = mat.group(2)
+
+    # 调用函数
+    return funcs[func](param)
+

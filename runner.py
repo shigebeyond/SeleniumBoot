@@ -25,6 +25,8 @@ class Runner(object):
     def __init__(self, driver: MyWebDriver):
         # webdriver
         self.driver = driver
+        # 已下载过的url对应的文件，key是url，value是文件
+        self.downloaded_files = {}
         # 动作映射函数
         self.actions = {
             'sleep': self.sleep,
@@ -213,6 +215,9 @@ class Runner(object):
 
     # 执行下载文件
     def _do_download(self, url, save_file):
+        if url in self.downloaded_files:
+            return self.downloaded_files[url]
+
         # 发请求
         res = self.driver.request('GET', url)
         # 保存响应的文件
@@ -221,7 +226,9 @@ class Runner(object):
         file.close()
         # 设置变量
         set_var('download_file', save_file)
+        self.downloaded_files[url] = save_file
         print(f"下载文件: url为{url}, 另存为{save_file}")
+        return save_file
 
     # 从图片标签中下载图片
     # :param config {css, xpath}

@@ -60,8 +60,7 @@ class Validator(response_wrapper.ResponseWrap):
     '''
     def run_func(self, func, val, param):
         if func not in self.funcs:
-            print_exception(f'无效校验函数: {func}')
-            exit()
+            raise Exception(f'无效校验函数: {func}')
         # 调用校验函数
         print(f"处理校验函数: {func}={param}")
         func = self.funcs[func]
