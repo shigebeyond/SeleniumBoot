@@ -138,7 +138,7 @@ ${data.msg} 多级变量, 用 ${ 与 } 包含
 ${random_str(6)} 支持调用函数，目前仅支持3个函数: random_str/random_int/incr
 ```
 
-函数列表
+函数罗列:
 ```
 random_str(n): 随机字符串，参数n是字符个数
 random_int(n): 随机数字，参数n是数字个数
@@ -222,7 +222,7 @@ download:
     save_file: test.jpg # 保存的文件名，默认为url中最后一级的文件名
 ```
 
-12. download_img_tag_by: 下载单个<img>标签中加载的图片; 
+12. download_img_tag_by: 下载单个`<img>`标签中加载的图片; 
 变量`download_file`记录最新下载的单个图片
 ```yaml
 download_img_tag_by:
@@ -232,7 +232,7 @@ download_img_tag_by:
     #save_file: test.jpg # 保存的文件名，默认为url中最后一级的文件名
 ```
 
-13. download_img_tags_by: 下载多个<img>标签中加载的图片; 
+13. download_img_tags_by: 下载多个`<img>`标签中加载的图片; 
 变量`download_files`记录最新下载的多个图片
 ```yaml
 download_img_tags_by:
@@ -241,8 +241,8 @@ download_img_tags_by:
 ```
 
 14. recognize_captcha: 识别验证码; 
-参数同 `download` 动作， 因为内部就是调用 `download`
-变量`captcha`记录识别出来的验证码
+参数同 `download` 动作， 因为内部就是调用 `download`;
+而变量`captcha`记录识别出来的验证码
 ```
 recognize_captcha:
     url: http://admin.jym1.com/login/verify_image
@@ -251,8 +251,8 @@ recognize_captcha:
 ```
 
 15. recognize_captcha_tag: 识别验证码标签中的验证码; 
-参数同 `download_img_tag_by` 动作， 因为内部就是调用 `download_img_tag_by`
-变量`captcha`记录识别出来的验证码
+参数同 `download_img_tag_by` 动作， 因为内部就是调用 `download_img_tag_by`;
+而变量`captcha`记录识别出来的验证码
 ```
 recognize_captcha_tag:
     xpath: //img[@class="pro-img"] # 过滤<img>标签的xpath路径， 与css属性只能二选一
@@ -365,27 +365,27 @@ for动作下包含一系列子步骤，表示循环执行这系列子步骤；�
 ```yaml
 # 循环3次
 for(3) :
-	# 每次迭代要执行的子步骤
-	- scroll_bottom:
-	  sleep: 2
+  # 每次迭代要执行的子步骤
+  - scroll_bottom:
+    sleep: 2
 
 # 无限循环，直到遇到跳出动作
 # 有变量for_i记录是第几次迭代
 for:
-	# 每次迭代要执行的子步骤
-	- break_if: for_i>2 # 满足条件则跳出循环
-	  scroll_bottom:
-	  sleep: 2
+  # 每次迭代要执行的子步骤
+  - break_if: for_i>2 # 满足条件则跳出循环
+    scroll_bottom:
+    sleep: 2
 ```
 
 34. once: 只执行一次，等价于 `for(1)`; 
 once 结合 moveon_if，可以模拟 python 的 `if` 语法效果
 ```yaml
 once:
-	# 每次迭代要执行的子步骤
-	- moveon_if: for_i<=2 # 满足条件则往下走，否则跳出循环
-	  scroll_bottom:
-	  sleep: 2
+  # 每次迭代要执行的子步骤
+  - moveon_if: for_i<=2 # 满足条件则往下走，否则跳出循环
+    scroll_bottom:
+    sleep: 2
 ```
 
 35. break_if: 满足条件则跳出循环; 
@@ -408,9 +408,9 @@ include: step-common.yml
 38. set_vars: 设置变量; 
 ```yaml
 set_vars:
-	name: shi
-	password: 123456
-	birthday: 5-27
+  name: shi
+  password: 123456
+  birthday: 5-27
 ```
 
 39. print_vars: 打印所有变量; 
