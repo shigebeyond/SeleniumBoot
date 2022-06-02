@@ -132,8 +132,9 @@ class Boot(object):
         print(f"-- 开始循环: {label} -- ")
         try:
             for i in range(n):
-                print(f"第{i}次迭代")
-                set_var('for_i', i)
+                # i+1表示迭代次数比较容易理解
+                print(f"第{i+1}次迭代")
+                set_var('for_i', i+1)
                 self.run_steps(steps)
         except BreakException as e:  # 跳出循环
             print(f"-- 跳出循环: {label}, 跳出条件: {e.condition} -- ")

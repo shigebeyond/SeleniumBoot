@@ -61,7 +61,7 @@ SeleniumBoot 步骤配置文件.yml
 - # 登录
   goto:
     url: http://admin.jym1.com/login
-  sleep: 5 # 浏览器F12打开开发者模式，切network，打开Preserve log，来监听提交登录验证的请求，以便检查识别的验证码参数是否有问题
+  sleep: 5 # 人工介入，浏览器F12打开开发者模式，切network，打开Preserve log，来监听提交登录验证的请求，以便检查识别的验证码参数是否有问题
   # 识别验证码, 验证码会写到变量captcha
   recognize_captcha:
     url: http://admin.jym1.com/login/verify_image
@@ -378,7 +378,7 @@ refresh:
 ```
 
 33. for: 循环; 
-for动作下包含一系列子步骤，表示循环执行这系列子步骤；变量`for_i`记录是第几次迭代
+for动作下包含一系列子步骤，表示循环执行这系列子步骤；变量`for_i`记录是第几次迭代（从1开始）
 ```yaml
 # 循环3次
 for(3) :
@@ -387,7 +387,7 @@ for(3) :
     sleep: 2
 
 # 无限循环，直到遇到跳出动作
-# 有变量for_i记录是第几次迭代
+# 有变量for_i记录是第几次迭代（从1开始）
 for:
   # 每次迭代要执行的子步骤
   - break_if: for_i>2 # 满足条件则跳出循环

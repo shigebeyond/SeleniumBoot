@@ -44,7 +44,7 @@ def random_int(n):
 # 自增的值
 incr_vals = {}
 
-# 自增
+# 自增值，从1开始
 def incr(key):
     if key not in incr_vals:
         incr_vals[key] = 0
