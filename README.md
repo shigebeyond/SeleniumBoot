@@ -33,16 +33,31 @@ pip3 install SeleniumBoot
 
 ## 使用
 ```
-SeleniumBoot 步骤配置文件
+SeleniumBoot 步骤配置文件.yml
 ```
 
 ## 步骤配置文件demo
-用于指定多个步骤, 示例如 step.yml;
+用于指定多个步骤, 示例见源码 example 目录下的文件;
 
 顶级的元素是步骤;
 
 每个步骤里有多个动作(如goto/sleep/submit_form)，如果动作有重名，就另外新开一个步骤写动作，这是由yaml语法限制导致的，但不影响步骤执行。
+
+简单贴出2个demo
+1. 下载图片: 详见 example/step-mn52.yml
+```yaml
+# 下载美女图
+- # 首页
+  goto:
+    url: https://www.mn52.com/
+  # 下载多个图片
+  download_img_tags_by:
+    xpath: '//img[@class="img-responsive"]'
+    save_dir: downloads
 ```
+
+2. 内部项目测试: 详见 example/step-jym.yml
+```yaml
 - # 登录
   goto:
     url: http://admin.jym1.com/login
