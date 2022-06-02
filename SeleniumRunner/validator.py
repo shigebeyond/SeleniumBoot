@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import re
-import response_wrapper
+from SeleniumRunner import response_wrapper
 from selenium import webdriver
 from requests import Response
-from util import print_exception
+
 
 # 校验器
 class Validator(response_wrapper.ResponseWrap):

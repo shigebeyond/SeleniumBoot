@@ -1,15 +1,5 @@
-- # 登录
-  goto:
-    url: http://admin.jym1.com/login
-#  sleep: 5 # 浏览器F12打开开发者模式，切network，打开Preserve log，来监听提交登录验证的请求，以便检查识别的验证码参数是否有问题
-  # 识别验证码, 验证码会写到变量captcha
-#  recognize_captcha:
-#    url: http://admin.jym1.com/login/verify_image
-  # 提交表单
-  submit_form:
-    account: '18877310999'
-    passwd: '123456'
-#    verify_text: $captcha # 验证码
+- # 包含登录的步骤
+  include: step-jym-login.yml
 - # 商品列表
   goto:
     url: http://admin.jym1.com/goods/goods_service_list

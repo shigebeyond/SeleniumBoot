@@ -4,14 +4,11 @@
 import time
 import sys
 import os
-from ocr import ocr_youdao
-from util import read_yaml, print_exception, set_var, replace_var
-import util
-import extractor
-import validator
+from SeleniumRunner.ocr import *
+from SeleniumRunner.util import read_yaml, print_exception, set_var, replace_var
+from SeleniumRunner import util, validator, extractor
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver import Chrome
 from selenium.webdriver import ChromeOptions
@@ -29,6 +26,7 @@ class BreakException(Exception):
 class Runner(object):
 
     def __init__(self, driver: MyWebDriver):
+        ocr_youdao.recognize_text
         # webdriver
         self.driver = driver
         # 步骤文件所在的目录
@@ -551,11 +549,13 @@ class Runner(object):
     def refresh(self, _):
         self.driver.refresh()
 
-if __name__ == '__main__':
+# cli入口
+def main():
+    global driver
     # 浏览器驱动
     option = ChromeOptions()
     option.add_experimental_option('excludeSwitches', ['enable-automation'])
-    #driver = Chrome(options=option)
+    # driver = Chrome(options=option)
     driver = MyWebDriver(options=option)
     # 基于yaml的执行器
     runner = Runner(driver)
@@ -567,3 +567,7 @@ if __name__ == '__main__':
     # 执行yaml配置的步骤
     runner.run(step_file)
     driver.quit()
+
+
+if __name__ == '__main__':
+    main()

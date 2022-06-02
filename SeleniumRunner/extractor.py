@@ -1,13 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import re
-import json
-import response_wrapper
 from requests import Response
-import util
-from runner import MyWebDriver
-from util import print_exception, set_var
+from SeleniumRunner import util, response_wrapper
+from SeleniumRunner.runner import MyWebDriver
+from SeleniumRunner.util import set_var
+import json # eval 可能会用到
+import re
 
 # 抽取器
 class Extractor(response_wrapper.ResponseWrap):
