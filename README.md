@@ -37,7 +37,7 @@ SeleniumBoot 步骤配置文件.yml
 ```
 
 ## 步骤配置文件demo
-用于指定多个步骤, 示例见源码 example 目录下的文件;
+用于指定多个步骤, 示例见源码 [example](https://github.com/shigebeyond/SeleniumBoot/tree/main/example) 目录下的文件;
 
 顶级的元素是步骤;
 
