@@ -4,12 +4,15 @@
 import time
 import yaml
 import re
+import os
 import random
 from jsonpath import jsonpath
 
 # 读yaml配置
 # :param yaml_file (步骤配置的)yaml文件
 def read_yaml(yaml_file):
+    if not os.path.exists(yaml_file):
+        raise Exception(f"没找到步骤配置文件: {yaml_file}")
     file = open(yaml_file, 'r', encoding="utf-8")
     txt = file.read()
     file.close()
