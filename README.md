@@ -1,4 +1,4 @@
-# SeleniumRunner - yaml驱动Selenium测试
+# SeleniumBoot - yaml驱动Selenium测试
 
 ## 概述
 Selenium是基于浏览器的自动化测试工具，但是要写python代码；
@@ -26,12 +26,17 @@ Selenium是基于浏览器的自动化测试工具，但是要写python代码；
 ## todo
 1. 支持更多的动作
 
-## 安装依赖
+## 安装
 ```
-pip3 install -r requirements.txt
+pip3 install SeleniumBoot
 ```
 
-## 步骤配置文件
+## 使用
+```
+SeleniumBoot 步骤配置文件
+```
+
+## 步骤配置文件demo
 用于指定多个步骤, 示例如 step.yml;
 
 顶级的元素是步骤;
@@ -102,11 +107,6 @@ pip3 install -r requirements.txt
   goto:
     url: http://admin.jym1.com/store/store_list
   sleep: 2
-```
-
-## 运行
-```
-python runner.py 步骤配置文件
 ```
 
 ## 配置详解

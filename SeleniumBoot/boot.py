@@ -4,9 +4,9 @@
 import time
 import sys
 import os
-from SeleniumRunner.ocr import *
-from SeleniumRunner.util import read_yaml, print_exception, set_var, replace_var
-from SeleniumRunner import util, validator, extractor
+from SeleniumBoot.ocr import *
+from SeleniumBoot.util import read_yaml, print_exception, set_var, replace_var
+from SeleniumBoot import util, validator, extractor
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.common.action_chains import ActionChains
@@ -22,8 +22,8 @@ class BreakException(Exception):
     def __init__(self, condition):
         self.condition = condition # 跳转条件
 
-# selenium基于yaml的执行器
-class Runner(object):
+# selenium基于yaml的启动器
+class Boot(object):
 
     def __init__(self, driver: MyWebDriver):
         ocr_youdao.recognize_text
@@ -558,14 +558,14 @@ def main():
     # driver = Chrome(options=option)
     driver = MyWebDriver(options=option)
     # 基于yaml的执行器
-    runner = Runner(driver)
+    boot = Boot(driver)
     # 步骤配置的yaml
     if len(sys.argv) > 1:
         step_file = sys.argv[1]
     else:
         step_file = 'step.yml'
     # 执行yaml配置的步骤
-    runner.run(step_file)
+    boot.run(step_file)
     driver.quit()
 
 

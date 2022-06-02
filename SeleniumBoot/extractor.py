@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from requests import Response
-from SeleniumRunner import util, response_wrapper
-from SeleniumRunner.runner import MyWebDriver
-from SeleniumRunner.util import set_var
+from SeleniumBoot import util, response_wrapper
+from SeleniumBoot.boot import MyWebDriver
+from SeleniumBoot.util import set_var
 import json # eval 可能会用到
 import re
 
