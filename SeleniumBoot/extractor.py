@@ -2,16 +2,17 @@
 # -*- coding: utf-8 -*-
 
 from requests import Response
-from SeleniumBoot import util, response_wrapper
-from SeleniumBoot.boot import MyWebDriver
-from SeleniumBoot.util import set_var
+from selenium import webdriver
+import util
+import response_wrapper
+from util import set_var
 import json # eval 可能会用到
 import re
 
 # 抽取器
 class Extractor(response_wrapper.ResponseWrap):
 
-    def __init__(self, driver: MyWebDriver, res: Response = None):
+    def __init__(self, driver: webdriver.Chrome, res: Response = None):
         super(Extractor, self).__init__(driver, res)
 
     # 抽取参数

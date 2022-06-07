@@ -4,9 +4,11 @@
 import time
 import sys
 import os
-from SeleniumBoot.ocr import *
-from SeleniumBoot.util import read_yaml, print_exception, set_var, replace_var
-from SeleniumBoot import util, validator, extractor
+from ocr import *
+from util import read_yaml, print_exception, set_var, replace_var
+import util
+import validator
+import extractor
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.common.action_chains import ActionChains
@@ -33,6 +35,8 @@ class Boot(object):
         self.step_dir = None
         # 已下载过的url对应的文件，key是url，value是文件
         self.downloaded_files = {}
+        # 基础url
+        self.base_url = None
         # 动作映射函数
         self.actions = {
             'sleep': self.sleep,
@@ -190,11 +194,23 @@ class Boot(object):
         e = extractor.Extractor(self.driver, res)
         e.run(config)
 
+    # 设置基础url
+    def set_base_url(self, url):
+        self.base_url = url
+
+    # 拼接url
+    def _get_url(self, config):
+        url = config['url']
+        url = replace_var(url)  # 替换变量
+        # 添加基url
+        if (self.base_url is not None) and ("http" not in url):
+            url = self.base_url + url
+        return url
+
     # 跳转
     # :param config {url, validate_by_jsonpath, validate_by_css, validate_by_xpath, extract_by_jsonpath, extract_by_css, extract_by_xpath, extract_by_eval}
     def goto(self, config = {}):
-        url = config['url']
-        url = replace_var(url) # 替换变量
+        url = self._get_url(config)
         driver.get(url)
         # fix bug: 如果跳到table页，会异步加载，必须等加载完才能解析table，因此等等
         time.sleep(2)
@@ -205,8 +221,7 @@ class Boot(object):
     # get请求
     # :param config {url, is_ajax, validate_by_jsonpath, validate_by_css, validate_by_xpath, extract_by_jsonpath, extract_by_css, extract_by_xpath, extract_by_eval}
     def get(self, config = {}):
-        url = config['url']
-        url = replace_var(url)  # 替换变量
+        url = self._get_url(config)
         headers = {}
         if 'is_ajax' in config and config['is_ajax']:
             headers = {
@@ -220,8 +235,7 @@ class Boot(object):
     # post请求
     # :param config {url, is_ajax, data, validate_by_jsonpath, validate_by_css, validate_by_xpath, extract_by_jsonpath, extract_by_css, extract_by_xpath, extract_by_eval}
     def post(self, config = {}):
-        url = config['url']
-        url = replace_var(url)  # 替换变量
+        url = self._get_url(config)
         data = config['data']
         for k, v in data.items():
             data[k] = replace_var(v)  # 替换变量
@@ -238,8 +252,7 @@ class Boot(object):
     # 上传文件
     # :param config {url, files, validate_by_jsonpath, validate_by_css, validate_by_xpath, extract_by_jsonpath, extract_by_css, extract_by_xpath, extract_by_eval}
     def upload(self, config = {}):
-        url = config['url']
-        url = replace_var(url)  # 替换变量
+        url = self._get_url(config)
         # 文件
         files = {}
         for name, path in config['files'].items():
@@ -252,8 +265,7 @@ class Boot(object):
     # 下载文件
     # :param config {url, save_dir, save_file}
     def download(self, config={}):
-        url = config['url']
-        url = replace_var(url)  # 替换变量
+        url = self._get_url(config)
         # 文件名
         save_file = self._prepare_save_file(config, url)
         # 真正的下载

@@ -435,6 +435,11 @@ set_vars:
 print_vars:
 ```
 
+40. set_base_url: 设置基础url
+```yaml
+set_base_url: https://www.taobao.com/
+```
+
 ## 校验器
 只针对 goto/get/post/upload 有发送http请求的动作, 主要是为了校验响应的内容
 

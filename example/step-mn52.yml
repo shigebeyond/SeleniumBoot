@@ -5,4 +5,4 @@
   # 下载多个图片
   download_img_tags_by:
     xpath: '//img[@class="img-responsive"]'
-    save_dir: downloads
+    #save_dir: downloads

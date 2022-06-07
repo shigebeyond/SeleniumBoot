@@ -1,2 +1,4 @@
 报告
 https://www.cnblogs.com/tkliu/p/16136180.html
+https://www.cnblogs.com/fnng/p/16010170.html
+https://gitee.com/fnngj/XTestRunner

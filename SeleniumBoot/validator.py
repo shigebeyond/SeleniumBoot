@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import re
-from SeleniumBoot import response_wrapper
+import response_wrapper
 from selenium import webdriver
 from requests import Response
 
