@@ -5,9 +5,9 @@
     url: http://admin.jym1.com/goods/goods_service_list
     # 网页中html的提取变量
     extract_by_xpath:
-      goods_id: //table/tbody/tr[1]/td[1] # 第一行第一列
+      goods_id: //table/tbody/tr[1]/td[4] # 第一行第4列
   #  extract_by_css:
-  #    goods_id: table>tbody>tr:nth-child(1)>td:nth-child(1) # 第一行第一列
+  #    goods_id: table>tbody>tr:nth-child(1)>td:nth-child(4) # 第一行第4列
 - # 商品详情
   goto:
     url: http://admin.jym1.com/goods/goods_info?id=$goods_id&type=2
