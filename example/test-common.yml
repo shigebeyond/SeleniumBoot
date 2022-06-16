@@ -1,3 +1,5 @@
+#命令行切换到boot.py所在目录
+#执行命令python3 boot.py ../example/test-xxx.yml
 #登录账号
 - set_vars:
     site: admin.jym0.com #站点
