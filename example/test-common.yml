@@ -1,5 +1,14 @@
+#说明
 #命令行切换到boot.py所在目录
-#执行命令python3 boot.py ../example/test-xxx.yml 不包括common
+#在这里配置对应参数
+#然后执行命令python3 boot.py ../example/test-xxx.yml 不包括common
+
+#test-login.yml 登录
+#test-list.yml 列表
+#test-detail.yml 详情
+#test-action.yml 增删改
+#test-upload.yml 上传
+
 #登录账号
 - set_vars:
     site: admin.jym0.com #站点
