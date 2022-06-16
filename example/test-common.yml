@@ -12,7 +12,7 @@
 - set_vars:
     controller: push_doctor #控制器
     list: push_doctor_list #列表
-    detail: push_doctor_detail #详情
+    detail: push_doctor_detail/30 #详情
     action: delete_push_doctor #增删改
 #action参数
 - set_vars:

@@ -1,5 +1,5 @@
 - include: test-list.yml
 #详情
 - goto:
-    url: http://$site/$controller/$detail?id=$id&type=2
-    sleep: $sleep
+    url: http://$site/$controller/$detail
+    sleep: 30
