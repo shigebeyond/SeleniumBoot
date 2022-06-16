@@ -269,6 +269,9 @@ class Boot(object):
         # 文件
         files = {}
         for name, path in config['files'].items():
+            if(path[0] == "$"):
+                max_len = len(path)
+                path = get_var(path[1:max_len])
             files[name] = open(path, 'rb')
         # 发请求
         res = self.driver.request('POST', url, files=files)
