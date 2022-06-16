@@ -1,0 +1,7 @@
+- include: test-login.yml
+#列表
+- goto:
+    url: http://$site/$controller/$list
+    extract_by_xpath:
+      id: $xpath
+    sleep: $sleep

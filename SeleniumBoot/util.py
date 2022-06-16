@@ -58,9 +58,13 @@ vars = {}
 def set_var(name, val):
     vars[name] = val
 
+# 获取变量
+def get_var(name):
+    return vars[name]
+
 # 替换变量： 将 {变量名} 替换为 变量值
 def replace_var(txt):
-    if isinstance(txt, int) or isinstance(txt, float):
+    if isinstance(txt, int) or isinstance(txt, float) or isinstance(txt,dict):
         return txt
 
     # re正则匹配替换字符串 https://cloud.tencent.com/developer/article/1774589

@@ -1,0 +1,9 @@
+#- include: test-common.yml
+- include: test-login.yml
+#- include: test-upload.yml
+- goto:
+    url: http://$site/$controller/$action
+- post:
+    url: http://$site/$controller/$action
+    is_ajax: true
+    data: $form_data

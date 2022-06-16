@@ -1,0 +1,7 @@
+- include: test-common.yml
+#执行登录
+- goto:
+    url: http://$site/$login
+  submit_form:
+    account: $account
+    passwd: $passwd

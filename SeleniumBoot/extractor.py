@@ -5,7 +5,7 @@ from requests import Response
 from selenium import webdriver
 import util
 import response_wrapper
-from util import set_var
+from util import set_var,get_var
 import json # eval 可能会用到
 import re
 
@@ -32,6 +32,9 @@ class Extractor(response_wrapper.ResponseWrap):
     # 执行单个类型的抽取
     def run_type(self, type, fields):
         for var, path in fields.items():
+            if(path[0] == "$"):
+                max_len = len(path)
+                path = get_var(path[1:max_len])
             # 获得字段值
             val = self._get_val_by(type, path)
             # 抽取单个字段

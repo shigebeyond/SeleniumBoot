@@ -5,7 +5,7 @@ import time
 import sys
 import os
 from ocr import *
-from util import read_yaml, print_exception, set_var, replace_var
+from util import read_yaml, print_exception, set_var, replace_var,get_var
 import util
 import validator
 import extractor
@@ -166,6 +166,7 @@ class Boot(object):
 
     # 设置变量
     def set_vars(self, vars):
+
         for k, v in vars.items():
             v = replace_var(v)  # 替换变量
             set_var(k, v)
@@ -237,15 +238,27 @@ class Boot(object):
     def post(self, config = {}):
         url = self._get_url(config)
         data = config['data']
-        for k, v in data.items():
-            data[k] = replace_var(v)  # 替换变量
+        if isinstance(data,str):
+            max_len = len(data)
+            ret = get_var(data[1:max_len])
+            if isinstance(ret,dict):
+                data = ret
+            else:
+                raise Exception("该变量不是字典类型")
+
+        if isinstance(data,dict):
+            for k, v in data.items():
+                data[k] = replace_var(v)  # 替换变量
+
         headers = {}
         if 'is_ajax' in config and config['is_ajax']:
             headers = {
                 'X-Requested-With': 'XMLHttpRequest'
             }
+        print(url)
+        print(data)
         res = self.driver.request('POST', url, headers=headers, data=data)
-        # print(res.text)
+        print(res.text)
         # 解析响应
         self._analyze_response(res, config)
 
