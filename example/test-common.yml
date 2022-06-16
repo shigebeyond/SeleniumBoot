@@ -6,8 +6,9 @@
     login: login #登录地址
     account: '18877310999' #账号
     passwd: '123456' #密码
-#上传图片
+#列表xpath
     xpath: '//table/tbody/tr[1]/td[4]'
+#上传图片
     upload: common_upload_img/store_img #上传控制器
     file_path: /home/zsh/Pictures/kedaya.jpeg #图片地址
 #控制器
@@ -15,7 +16,7 @@
     controller: push_doctor #控制器
     list: push_doctor_list #列表
     detail: push_doctor_detail/30 #详情
-    action: delete_push_doctor #增删改
+    action: create_push_doctor #增删改
 #action参数
 - set_vars:
     form_data: #数组名
