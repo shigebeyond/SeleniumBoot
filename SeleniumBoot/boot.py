@@ -86,8 +86,15 @@ class Boot(object):
     :param step_files 步骤配置文件或目录的列表
     '''
     def run(self, step_files):
-        for path in step_files:
-            path = Path(path)
+        for step_file in step_files:
+            # 获得步骤文件的绝对路径
+            if self.step_dir == None:
+                step_file = os.path.abspath(step_file)
+                self.step_dir = os.path.dirname(step_file)
+            else:
+                step_file = self.step_dir + os.sep + step_file
+
+            path = Path(step_file)
             # 1 不存在
             if not path.exists():
                 raise Exception(f'步骤配置文件或目录不存在: {path}')
@@ -105,12 +112,6 @@ class Boot(object):
     # 执行单个步骤文件
     # :param step_file 步骤配置文件路径
     def run_1file(self, step_file):
-        # 获得步骤文件的绝对路径
-        if self.step_dir == None:
-            step_file = os.path.abspath(step_file)
-            self.step_dir = os.path.dirname(step_file)
-        else:
-            step_file = self.step_dir + os.sep + step_file
         print(f"加载并执行步骤文件: {step_file}")
         # 获得步骤
         steps = read_yaml(step_file)
