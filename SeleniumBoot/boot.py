@@ -5,7 +5,7 @@ import time
 import sys
 import os
 from ocr import *
-from util import read_yaml, print_exception, set_var, replace_var,get_var
+from util import *
 import util
 import validator
 import extractor
@@ -117,7 +117,7 @@ class Boot(object):
             return
 
         if action not in self.actions:
-            raise Exception(f'无效动作: {action}')
+            raise Exception(f'无效动作: [{action}]')
 
         # 调用动作对应的函数
         print(f"处理动作: {action}={param}")
@@ -166,7 +166,6 @@ class Boot(object):
 
     # 设置变量
     def set_vars(self, vars):
-
         for k, v in vars.items():
             v = replace_var(v)  # 替换变量
             set_var(k, v)
@@ -208,19 +207,6 @@ class Boot(object):
             url = self.base_url + url
         return url
 
-    def parse_var(self,data):
-        if isinstance(data,str):
-            ret = get_var(data[1:])
-            if isinstance(ret,dict):
-                data = ret
-            else:
-                raise Exception("该变量不是字典类型")
-
-        if isinstance(data,dict):
-            for k, v in data.items():
-                data[k] = replace_var(v)  # 替换变量
-        return data
-
     # 跳转
     # :param config {url, validate_by_jsonpath, validate_by_css, validate_by_xpath, extract_by_jsonpath, extract_by_css, extract_by_xpath, extract_by_eval}
     def goto(self, config = {}):
@@ -250,7 +236,7 @@ class Boot(object):
     # :param config {url, is_ajax, data, validate_by_jsonpath, validate_by_css, validate_by_xpath, extract_by_jsonpath, extract_by_css, extract_by_xpath, extract_by_eval}
     def post(self, config = {}):
         url = self._get_url(config)
-        data = self.parse_var(config['data'])
+        data = self.replace_var(config['data'])
         headers = {}
         if 'is_ajax' in config and config['is_ajax']:
             headers = {
