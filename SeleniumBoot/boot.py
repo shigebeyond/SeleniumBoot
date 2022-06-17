@@ -181,7 +181,7 @@ class Boot(object):
 
     # 加载并执行其他步骤文件
     def include(self, step_file):
-        self.run(step_file)
+        self.run([step_file])
 
     # 设置变量
     def set_vars(self, vars):
@@ -594,11 +594,11 @@ def main():
     boot = Boot(driver)
     # 步骤配置的yaml
     if len(sys.argv) > 1:
-        step_file = sys.argv[1]
+        step_files = sys.argv[1:]
     else:
-        step_file = 'step.yml'
+        raise Exception("未指定步骤配置文件或目录")
     # 执行yaml配置的步骤
-    boot.run(step_file)
+    boot.run(step_files)
     driver.quit()
 
 
