@@ -33,8 +33,7 @@ class Extractor(response_wrapper.ResponseWrap):
     def run_type(self, type, fields):
         for var, path in fields.items():
             if(path[0] == "$" and path[1] != "."):
-                max_len = len(path)
-                path = get_var(path[1:max_len])
+                path = get_var(path[1:])
             # 获得字段值
             val = self._get_val_by(type, path)
             # 抽取单个字段

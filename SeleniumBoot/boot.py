@@ -210,8 +210,7 @@ class Boot(object):
 
     def parse_var(self,data):
         if isinstance(data,str):
-            max_len = len(data)
-            ret = get_var(data[1:max_len])
+            ret = get_var(data[1:])
             if isinstance(ret,dict):
                 data = ret
             else:
@@ -272,8 +271,7 @@ class Boot(object):
         files = {}
         for name, path in config['files'].items():
             if(path[0] == "$"):
-                max_len = len(path)
-                path = get_var(path[1:max_len])
+                path = get_var(path[1:])
             files[name] = open(path, 'rb')
         # 发请求
         res = self.driver.request('POST', url, files=files)
