@@ -4,6 +4,7 @@
 import time
 import sys
 import os
+import fnmatch
 from pathlib import Path
 from ocr import *
 from util import *
@@ -93,14 +94,28 @@ class Boot(object):
 
             # 2 目录: 遍历执行子文件
             if os.path.isdir(path):
-                for file in os.listdir(path):
-                    file = os.path.join(path, file)
-                    if os.path.isfile(file):
-                        self.run_1file(file)
+                self.run_1dir(path)
                 return
 
             # 3 文件
+            # 3.1 文件+模式
+            if '*' in path:
+                dir, pattern = path.rsplit(os.sep, 1)  # 从后面分割，分割为目录+模式
+                self.run_1dir(dir, pattern)
+                return
+
+            # 3.2 纯文件
             self.run_1file(path)
+
+    # 执行单个步骤目录
+    # :param path 目录
+    # :param pattern 文件名模式
+    def run_1dir(self, dir, pattern ='*.yml'):
+        for file in os.listdir(dir):
+            if fnmatch.fnmatch(file, pattern): # 匹配文件名模式
+                file = os.path.join(dir, file)
+                if os.path.isfile(file):
+                    self.run_1file(file)
 
     # 执行单个步骤文件
     # :param step_file 步骤配置文件路径
