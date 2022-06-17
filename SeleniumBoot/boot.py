@@ -208,6 +208,20 @@ class Boot(object):
             url = self.base_url + url
         return url
 
+    def parse_var(self,data):
+        if isinstance(data,str):
+            max_len = len(data)
+            ret = get_var(data[1:max_len])
+            if isinstance(ret,dict):
+                data = ret
+            else:
+                raise Exception("该变量不是字典类型")
+
+        if isinstance(data,dict):
+            for k, v in data.items():
+                data[k] = replace_var(v)  # 替换变量
+        return data
+
     # 跳转
     # :param config {url, validate_by_jsonpath, validate_by_css, validate_by_xpath, extract_by_jsonpath, extract_by_css, extract_by_xpath, extract_by_eval}
     def goto(self, config = {}):
@@ -237,19 +251,7 @@ class Boot(object):
     # :param config {url, is_ajax, data, validate_by_jsonpath, validate_by_css, validate_by_xpath, extract_by_jsonpath, extract_by_css, extract_by_xpath, extract_by_eval}
     def post(self, config = {}):
         url = self._get_url(config)
-        data = config['data']
-        if isinstance(data,str):
-            max_len = len(data)
-            ret = get_var(data[1:max_len])
-            if isinstance(ret,dict):
-                data = ret
-            else:
-                raise Exception("该变量不是字典类型")
-
-        if isinstance(data,dict):
-            for k, v in data.items():
-                data[k] = replace_var(v)  # 替换变量
-
+        data = self.parse_var(config['data'])
         headers = {}
         if 'is_ajax' in config and config['is_ajax']:
             headers = {
