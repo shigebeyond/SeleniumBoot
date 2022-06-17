@@ -86,24 +86,17 @@ class Boot(object):
     :param step_files 步骤配置文件或目录的列表
     '''
     def run(self, step_files):
-        for step_file in step_files:
-            # 获得步骤文件的绝对路径
-            if self.step_dir == None:
-                step_file = os.path.abspath(step_file)
-                self.step_dir = os.path.dirname(step_file)
-            else:
-                step_file = self.step_dir + os.sep + step_file
-
-            path = Path(step_file)
+        for path in step_files:
             # 1 不存在
-            if not path.exists():
+            if not os.path.exists(path):
                 raise Exception(f'步骤配置文件或目录不存在: {path}')
 
-            # 2 目录: 递归调用子文件
-            if path.is_dir():
-                for entry in path.iterdir():
-                    if entry.is_file():
-                        self.run_1file(path)
+            # 2 目录: 遍历执行子文件
+            if os.path.isdir(path):
+                for file in os.listdir(path):
+                    file = os.path.join(path, file)
+                    if os.path.isfile(file):
+                        self.run_1file(file)
                 return
 
             # 3 文件
@@ -111,7 +104,16 @@ class Boot(object):
 
     # 执行单个步骤文件
     # :param step_file 步骤配置文件路径
-    def run_1file(self, step_file):
+    # :param include 是否inlude动作触发
+    def run_1file(self, step_file, include = False):
+        # 获得步骤文件的绝对路径
+        if include: # 补上绝对路径
+            if not os.path.isabs(step_file):
+                step_file = self.step_dir + os.sep + step_file
+        else: # 记录目录
+            step_file = os.path.abspath(step_file)
+            self.step_dir = os.path.dirname(step_file)
+
         print(f"加载并执行步骤文件: {step_file}")
         # 获得步骤
         steps = read_yaml(step_file)
@@ -182,7 +184,7 @@ class Boot(object):
 
     # 加载并执行其他步骤文件
     def include(self, step_file):
-        self.run([step_file])
+        self.run_1file(step_file, True)
 
     # 设置变量
     def set_vars(self, vars):
