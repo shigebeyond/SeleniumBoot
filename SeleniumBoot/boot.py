@@ -270,8 +270,7 @@ class Boot(object):
         # 文件
         files = {}
         for name, path in config['files'].items():
-            if(path[0] == "$"):
-                path = get_var(path[1:])
+            path = replace_var(path)
             files[name] = open(path, 'rb')
         # 发请求
         res = self.driver.request('POST', url, files=files)
