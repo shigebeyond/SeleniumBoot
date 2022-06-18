@@ -107,10 +107,11 @@ class Boot(object):
             # 3.2 纯文件
             self.run_1file(path)
 
-    # 执行单个步骤目录
+    # 执行单个步骤目录: 遍历执行子文件
     # :param path 目录
     # :param pattern 文件名模式
     def run_1dir(self, dir, pattern ='*.yml'):
+        # 遍历目录: https://blog.csdn.net/allway2/article/details/124176562
         for file in os.listdir(dir):
             if fnmatch.fnmatch(file, pattern): # 匹配文件名模式
                 file = os.path.join(dir, file)
