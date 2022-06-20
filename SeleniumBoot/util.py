@@ -91,13 +91,14 @@ def do_replace_var(txt):
     # re正则匹配替换字符串 https://cloud.tencent.com/developer/article/1774589
     def replace(match) -> str:
         name = match.group(1)
+        print(f"name:{name}")
         # 单独处理
         if '(' in name:  # 函数调用, 如 random_str(1)
             r = parse_and_call_func(name)
             return str(r)
         if '.' in name:  # 有多级属性, 如 data.msg
             return jsonpath(vars, '$.' + name)[0]
-        return vars[name]
+        return str(vars[name])
 
     txt = re.sub(r'\$([\w\d_]+)', replace, txt)  # 处理变量 $msg
     txt = re.sub(r'\$\{([\w\d_\.\(\)]+)\}', replace, txt)  # 处理变量 ${data.msg} 或 函数调用 ${random_str(1)}

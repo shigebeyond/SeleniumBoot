@@ -8,6 +8,7 @@ import fnmatch
 from pathlib import Path
 from ocr import *
 from util import *
+import ast
 import util
 import validator
 import extractor
@@ -277,7 +278,8 @@ class Boot(object):
     # :param config {url, is_ajax, data, validate_by_jsonpath, validate_by_css, validate_by_xpath, extract_by_jsonpath, extract_by_css, extract_by_xpath, extract_by_eval}
     def post(self, config = {}):
         url = self._get_url(config)
-        data = self.replace_var(config['data'])
+        data = replace_var(config['data'])
+        data = ast.literal_eval(data)
         headers = {}
         if 'is_ajax' in config and config['is_ajax']:
             headers = {
