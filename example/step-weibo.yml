@@ -1,6 +1,6 @@
 -
   # 包含其他步骤文件，如记录公共的步骤，或记录配置数据(如用户名密码)
-  include: step-common.yml
+  include: part-common.yml
   # 打印所有变量
   print_vars:
   # 首页

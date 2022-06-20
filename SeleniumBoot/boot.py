@@ -88,23 +88,24 @@ class Boot(object):
     '''
     def run(self, step_files):
         for path in step_files:
-            # 1 不存在
+            # 1 模式文件
+            if '*' in path:
+                dir, pattern = path.rsplit(os.sep, 1)  # 从后面分割，分割为目录+模式
+                if not os.path.exists(dir):
+                    raise Exception(f'步骤配置目录不存在: {dir}')
+                self.run_1dir(dir, pattern)
+                return
+
+            # 2 不存在
             if not os.path.exists(path):
                 raise Exception(f'步骤配置文件或目录不存在: {path}')
 
-            # 2 目录: 遍历执行子文件
+            # 3 目录: 遍历执行子文件
             if os.path.isdir(path):
                 self.run_1dir(path)
                 return
 
-            # 3 文件
-            # 3.1 文件+模式
-            if '*' in path:
-                dir, pattern = path.rsplit(os.sep, 1)  # 从后面分割，分割为目录+模式
-                self.run_1dir(dir, pattern)
-                return
-
-            # 3.2 纯文件
+            # 4 纯文件
             self.run_1file(path)
 
     # 执行单个步骤目录: 遍历执行子文件
@@ -112,7 +113,9 @@ class Boot(object):
     # :param pattern 文件名模式
     def run_1dir(self, dir, pattern ='*.yml'):
         # 遍历目录: https://blog.csdn.net/allway2/article/details/124176562
-        for file in os.listdir(dir):
+        files = os.listdir(dir)
+        files.sort() # 按文件名排序
+        for file in files:
             if fnmatch.fnmatch(file, pattern): # 匹配文件名模式
                 file = os.path.join(dir, file)
                 if os.path.isfile(file):

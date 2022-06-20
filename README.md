@@ -35,7 +35,17 @@ pip3 install SeleniumBoot
 
 ## 使用
 ```
+# 1 执行单个文件
 SeleniumBoot 步骤配置文件.yml
+
+# 2 执行多个文件
+SeleniumBoot 步骤配置文件1.yml 步骤配置文件2.yml ...
+
+# 3 执行单个目录, 即执行该目录下所有的yml文件
+SeleniumBoot 步骤配置目录
+
+# 4 执行单个目录下的指定模式的文件
+SeleniumBoot 步骤配置目录/step-*.yml
 ```
 
 ## 步骤配置文件demo
@@ -421,7 +431,7 @@ moveon_if: for_i<=2 # 条件表达式，python语法
 
 37. include: 包含其他步骤文件，如记录公共的步骤，或记录配置数据(如用户名密码); 
 ```yaml
-include: step-common.yml
+include: part-common.yml
 ```
 
 38. set_vars: 设置变量; 
