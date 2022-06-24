@@ -137,8 +137,14 @@ class Boot(object):
         print(f"加载并执行步骤文件: {step_file}")
         # 获得步骤
         steps = read_yaml(step_file)
-        # 执行多个步骤
-        self.run_steps(steps)
+
+        steps = read_yaml(step_file)
+        try:
+            # 执行多个步骤
+            self.run_steps(steps)
+        except Exception as ex:
+            print(f"异常环境:当前步骤文件为 {step_file}, 当前url为 {self.driver.current_url}")
+            raise ex
 
     # 执行多个步骤
     def run_steps(self, steps):
