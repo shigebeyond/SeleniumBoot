@@ -389,7 +389,17 @@ scroll_bottom:
 refresh: 
 ```
 
-33. for: 循环; 
+33. forward: 前进; 
+```yaml
+forward: 
+```
+
+34. back: 后退; 
+```yaml
+back: 
+```
+
+35. for: 循环; 
 for动作下包含一系列子步骤，表示循环执行这系列子步骤；变量`for_i`记录是第几次迭代（从1开始）
 ```yaml
 # 循环3次
@@ -407,7 +417,7 @@ for:
     sleep: 2
 ```
 
-34. once: 只执行一次，等价于 `for(1)`; 
+36. once: 只执行一次，等价于 `for(1)`; 
 once 结合 moveon_if，可以模拟 python 的 `if` 语法效果
 ```yaml
 once:
@@ -417,24 +427,24 @@ once:
     sleep: 2
 ```
 
-35. break_if: 满足条件则跳出循环; 
+37. break_if: 满足条件则跳出循环; 
 只能定义在for循环的子步骤中
 ```yaml
 break_if: for_i>2 # 条件表达式，python语法
 ```
 
-36. moveon_if: 满足条件则往下走，否则跳出循环; 
+38. moveon_if: 满足条件则往下走，否则跳出循环; 
 只能定义在for循环的子步骤中
 ```yaml
 moveon_if: for_i<=2 # 条件表达式，python语法
 ```
 
-37. include: 包含其他步骤文件，如记录公共的步骤，或记录配置数据(如用户名密码); 
+39. include: 包含其他步骤文件，如记录公共的步骤，或记录配置数据(如用户名密码); 
 ```yaml
 include: part-common.yml
 ```
 
-38. set_vars: 设置变量; 
+40. set_vars: 设置变量; 
 ```yaml
 set_vars:
   name: shi
@@ -442,12 +452,12 @@ set_vars:
   birthday: 5-27
 ```
 
-39. print_vars: 打印所有变量; 
+41. print_vars: 打印所有变量; 
 ```yaml
 print_vars:
 ```
 
-40. set_base_url: 设置基础url
+42. set_base_url: 设置基础url
 ```yaml
 set_base_url: https://www.taobao.com/
 ```

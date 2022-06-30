@@ -31,7 +31,6 @@ class BreakException(Exception):
 class Boot(object):
 
     def __init__(self, driver: MyWebDriver):
-        ocr_youdao.recognize_text
         # webdriver
         self.driver = driver
         # 步骤文件所在的目录
@@ -74,6 +73,8 @@ class Boot(object):
             'scroll_top': self.scroll_top,
             'scroll_bottom': self.scroll_bottom,
             'refresh': self.refresh,
+            'forward': self.forward,
+            'back': self.back,
             'for': self.do_for,
             'once': self.once,
             'break_if': self.break_if,
@@ -291,10 +292,7 @@ class Boot(object):
             headers = {
                 'X-Requested-With': 'XMLHttpRequest'
             }
-        print(url)
-        print(data)
         res = self.driver.request('POST', url, headers=headers, data=data)
-        print(res.text)
         # 解析响应
         self._analyze_response(res, config)
 
