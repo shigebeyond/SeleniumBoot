@@ -48,10 +48,10 @@ class Boot(object):
             'post': self.post,
             'upload': self.upload,
             'download': self.download,
-            'download_img_tag_by': self.download_img_tag_by,
-            'download_img_tags_by': self.download_img_tags_by,
+            'download_img_element_by': self.download_img_element_by,
+            'download_img_elements_by': self.download_img_elements_by,
             'recognize_captcha': self.recognize_captcha,
-            'recognize_captcha_tag': self.recognize_captcha_tag,
+            'recognize_captcha_element': self.recognize_captcha_element,
             'submit_form': self.submit_form,
             'input_by_name': self.input_by_name,
             'input_by_css': self.input_by_css,
@@ -67,7 +67,7 @@ class Boot(object):
             'switch_to_frame_out': self.switch_to_frame_out,
             'switch_to_window': self.switch_to_window,
             'screenshot': self.screenshot,
-            'screenshot_tag_by': self.screenshot_tag_by,
+            'screenshot_element_by': self.screenshot_element_by,
             'execute_js': self.execute_js,
             'scroll': self.scroll,
             'scroll_top': self.scroll_top,
@@ -371,7 +371,7 @@ class Boot(object):
 
     # 从图片标签中下载图片
     # :param config {css, xpath}
-    def download_img_tag_by(self, config={}):
+    def download_img_element_by(self, config={}):
         # 获得img标签
         img = self._find_by_any(config)
         # 获得图片url
@@ -385,7 +385,7 @@ class Boot(object):
 
     # 从图片标签中下载图片
     # :param config {css, xpath}
-    def download_img_tags_by(self, config={}):
+    def download_img_elements_by(self, config={}):
         # 获得img标签
         imgs = self._find_all_by_any(config)
         save_files = [] # 记录多个下载图片
@@ -408,9 +408,9 @@ class Boot(object):
         self._do_recognize_captcha(file)
 
     # 识别验证码标签中的验证码
-    def recognize_captcha_tag(self, config={}):
+    def recognize_captcha_element(self, config={}):
         # 下载图片
-        file_path = self.download_img_tag_by(config)
+        file_path = self.download_img_element_by(config)
         # 识别验证码
         self._do_recognize_captcha(file_path)
 
@@ -432,7 +432,7 @@ class Boot(object):
         # 根据name来填充输入框
         self.input_by_name(input_data)
 
-        # self.driver.find_element_by_tag_name('form').submit() # 提交表单 -- 无效
+        # self.driver.find_element_by_element_name('form').submit() # 提交表单 -- 无效
         #self.driver.find_element_by_xpath('//button[@type="submit"]').click() # 点击提交按钮 -- 有效
         # 可以是 input[type=submit] 或 button[type=submit]
         #self.driver.find_element_by_css_selector('[type=submit]').click() # 点击提交按钮 -- 有效
@@ -577,7 +577,7 @@ class Boot(object):
 
     # 对某个标签截图存为png
     # :param config {css, xpath, save_dir, save_file}
-    def screenshot_tag_by(self, config):
+    def screenshot_element_by(self, config):
         ele = self._find_by_any(config)
         # 文件名
         default_file = str(time.time()).split(".")[0] + ".png" # 默认文件名

@@ -26,7 +26,7 @@
     save_file: test.jpg # 保存的文件名
   print: "下载文件 -- $download_file"
 - # 下载图片
-  download_img_tag_by:
+  download_img_element_by:
     xpath: //img[@class="pro-img"] # 过滤<img>标签的xpath路径， 与css属性只能二选一
     #css: img.pro-img # 过滤<img>标签的css selector模式， 与xpath属性只能二选一
   print: "下载文件 -- $download_file"

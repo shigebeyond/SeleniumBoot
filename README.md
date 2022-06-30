@@ -63,7 +63,7 @@ SeleniumBoot 步骤配置目录/step-*.yml
   goto:
     url: https://www.mn52.com/
   # 下载多个图片
-  download_img_tags_by:
+  download_img_elements_by:
     xpath: '//img[@class="img-responsive"]'
     save_dir: downloads
 ```
@@ -93,7 +93,7 @@ SeleniumBoot 步骤配置目录/step-*.yml
 - # 商品详情
   goto:
     url: http://admin.jym1.com/goods/goods_info?id=$goods_id&type=1
-  download_img_tag_by:
+  download_img_element_by:
     xpath: //img[@class="layui-upload-img"] # 过滤<img>标签的xpath路径， 与css属性只能二选一
     #css: img.layui-upload-img # 过滤<img>标签的css selector模式， 与xpath属性只能二选一
 - # 新建门店
@@ -251,20 +251,20 @@ download:
     save_file: test.jpg # 保存的文件名，默认为url中最后一级的文件名
 ```
 
-12. download_img_tag_by: 下载单个`<img>`标签中加载的图片; 
+12. download_img_element_by: 下载单个`<img>`标签中加载的图片; 
 变量`download_file`记录最新下载的单个图片
 ```yaml
-download_img_tag_by:
+download_img_element_by:
     xpath: //img[@class="pro-img"] # 过滤<img>标签的xpath路径，与css属性只能二选一
     #css: img.pro-img # 过滤<img>标签的css selector模式，与xpath属性只能二选一
     save_dir: downloads # 保存的目录，默认为 downloads
     #save_file: test.jpg # 保存的文件名，默认为url中最后一级的文件名
 ```
 
-13. download_img_tags_by: 下载多个`<img>`标签中加载的图片; 
+13. download_img_elements_by: 下载多个`<img>`标签中加载的图片; 
 变量`download_files`记录最新下载的多个图片
 ```yaml
-download_img_tags_by:
+download_img_elements_by:
     xpath: '//a[@class="pic J_ImgLoad"]/img'
     save_dir: downloads
 ```
@@ -279,11 +279,11 @@ recognize_captcha:
     # save_file: test.jpg # 保存的文件名，默认为url中最后一级的文件名
 ```
 
-15. recognize_captcha_tag: 识别验证码标签中的验证码; 
-参数同 `download_img_tag_by` 动作， 因为内部就是调用 `download_img_tag_by`;
+15. recognize_captcha_element: 识别验证码标签中的验证码; 
+参数同 `download_img_element_by` 动作， 因为内部就是调用 `download_img_element_by`;
 而变量`captcha`记录识别出来的验证码
 ```
-recognize_captcha_tag:
+recognize_captcha_element:
     xpath: //img[@class="pro-img"] # 过滤<img>标签的xpath路径， 与css属性只能二选一
     #css: img.pro-img # 过滤<img>标签的css selector模式， 与xpath属性只能二选一
     #save_dir: downloads # 保存的目录，默认为 downloads
@@ -355,9 +355,9 @@ screenshot:
     save_file: test.png # 保存的文件名，默认为:时间戳.png
 ```
 
-27. screenshot_tag_by: 对某个标签截图存为png; 
+27. screenshot_element_by: 对某个标签截图存为png; 
 ```yaml
-screenshot_tag_by
+screenshot_element_by
     css: 'iframe#main' # iframe的css selector模式，与xpath属性只能二选一
     #xpath: '//iframe[id="main"]' # iframe的xpath路径，与css属性只能二选一
     save_dir: downloads # 保存的目录，默认为 downloads

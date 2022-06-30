@@ -30,7 +30,7 @@ import time
 def submit_form(self, form_data = {}):
     for k, v in form_data.items(): # 设置表单域
         self.find_element_by_name(k).send_keys(v)
-    # driver.find_element_by_tag_name('form').submit() # 提交表单 -- 无效
+    # driver.find_element_by_element_name('form').submit() # 提交表单 -- 无效
     #driver.find_element_by_xpath('//button[@type="submit"]').click() # 点击提交按钮 -- 有效
     driver.find_element_by_css_selector('button[type=submit]').click() # 点击提交按钮 -- 有效
 WebDriver.submit_form = submit_form
