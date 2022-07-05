@@ -103,4 +103,6 @@ def recognize_text(file):
 '''
 
 if __name__ == '__main__':
-    recognize_text('./test.jpg')
+    # txt = recognize_text('./test.jpg')
+    txt = recognize_text('/home/shi/a.png')
+    print(txt)

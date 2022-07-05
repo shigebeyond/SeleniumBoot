@@ -15,12 +15,21 @@ import extractor
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver import Chrome
-from selenium.webdriver import ChromeOptions
+from selenium.webdriver import Chrome, ChromeOptions
+from selenium.webdriver.remote.webdriver import WebDriver
 from seleniumrequests.request import RequestsSessionMixin
 # 整合selenium-requests -- https://libraries.io/pypi/selenium-requests
 class MyWebDriver(RequestsSessionMixin, Chrome):
     pass
+
+# 扩展driver方法
+def is_element_exist(self, by):
+    try:
+        self.find_element(by)
+        return True
+    except:
+        return False
+WebDriver.is_element_exist = is_element_exist
 
 # 跳出循环的异常
 class BreakException(Exception):
@@ -483,21 +492,9 @@ class Boot(object):
                 ele.clear() # 先清空
                 ele.send_keys(value) # 后输入
 
-    # 类型转by
-    def type2by(self, type):
-        if type == 'id':
-            return By.ID
-        if type == 'name':
-            return By.NAME
-        if type == 'css':
-            return By.CSS_SELECTOR
-        if type == 'xpath':
-            return By.XPATH
-        raise Exception(f"不支持查找类型: {type}")
-
     # 根据指定类型，查找元素
     def _find_by(self, type, path):
-        return self.driver.find_element(self.type2by(type), path)
+        return self.driver.find_element(type2by(type), path)
 
     # 根据任一类型，查找元素
     def _find_by_any(self, config):
@@ -505,7 +502,9 @@ class Boot(object):
         for type in types:
             if type in config:
                 path = config[type]
-                return self.driver.find_element(self.type2by(type), path)
+                if type == 'xpath': # xpath支持变量
+                    path = replace_var(path)
+                return self.driver.find_element(type2by(type), path)
         raise Exception(f"没有查找类型: {config}")
 
     # 根据任一类型，查找元素
@@ -514,7 +513,7 @@ class Boot(object):
         for type in types:
             if type in config:
                 path = config[type]
-                return self.driver.find_elements(self.type2by(type), path)
+                return self.driver.find_elements(type2by(type), path)
         raise Exception(f"没有查找类型: {config}")
 
     # 点击按钮
@@ -609,6 +608,14 @@ class Boot(object):
     # 刷新网页
     def refresh(self, _):
         self.driver.refresh()
+
+    # 前进
+    def forward(self, _):
+        self.driver.forward()
+
+    # 后退
+    def back(self, _):
+        self.driver.back()
 
 # cli入口
 def main():

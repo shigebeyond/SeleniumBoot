@@ -2,10 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import re
+from util import *
 from lxml import etree
 from requests import Response
 from selenium import webdriver
 from jsonpath import jsonpath
+from selenium.webdriver.common.by import By
 
 # 响应包装器
 class ResponseWrap(object):
@@ -23,7 +25,7 @@ class ResponseWrap(object):
                 html = etree.parse(self.res.text, etree.HTMLParser())
                 return html.cssselect(path).text
 
-            return self.driver.find_element_by_css_selector(path).text
+            return self.driver.find_element(By.CSS_SELECTOR, path).text
 
         if type == 'xpath':
             # 检查xpath是否最后有属性
@@ -42,7 +44,7 @@ class ResponseWrap(object):
                     return ele.get(prop)
                 return ele.text
 
-            ele = self.driver.find_element_by_xpath(path)
+            ele = self.driver.find_element(By.XPATH, path)
             if prop != '': # 获得属性
                 return ele.get_attribute(prop)
             return ele.text
@@ -53,5 +55,8 @@ class ResponseWrap(object):
                 return jsonpath(data, path)[0]
 
             raise Exception(f"goto的响应不支持查找类型: {type}")
+
+        if type == 'id' or type == 'name':
+            return self.driver.find_element(type2by(type), path).text
 
         raise Exception(f"不支持查找类型: {type}")
