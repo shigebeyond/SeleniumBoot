@@ -10,3 +10,9 @@
     account: '18877310999'
     passwd: '123456'
 #    verify_text: $captcha # 验证码
+  # 登录后跳转主页
+  sleep: 3
+  # 从当前页面中提取变量
+  extract_by_css:
+    login_time: .last-login-time
+  print: $login_time

@@ -463,7 +463,11 @@ set_base_url: https://www.taobao.com/
 ```
 
 ## 校验器
-只针对 goto/get/post/upload 有发送http请求的动作, 主要是为了校验响应的内容
+主要是为了校验响应的内容, 根据不同场景有2种写法
+```
+1. 针对当前页面, 那么校验器作为普通动作来写
+2. 针对 goto/get/post/upload 有发送http请求的动作, 那么校验器在动作内作为普通属性来写
+```
 
 1. validate_by_xpath: 
 从html的响应中解析 xpath 路径对应的元素的值
@@ -507,7 +511,11 @@ validate_by_jsonpath:
 9. `regex_match`: 正则匹配
 
 ## 提取器
-只针对 goto/get/post/upload 有发送http请求的动作, 主要是为了从响应中提取变量
+主要是为了从响应中提取变量, 根据不同场景有2种写法
+```
+1. 针对当前页面, 那么提取器作为普通动作来写
+2. 针对 goto/get/post/upload 有发送http请求的动作, 那么提取器在动作内作为普通属性来写
+```
 
 1. extract_by_xpath:
 从html的响应中解析 xpath 路径指定的元素的值

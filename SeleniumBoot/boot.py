@@ -48,6 +48,10 @@ class Boot(object):
         self.downloaded_files = {}
         # 基础url
         self.base_url = None
+        # 当前页面的校验器
+        self.validator = validator.Validator(self.driver)
+        # 当前页面的提取器
+        self.extractor = extractor.Extractor(self.driver)
         # 动作映射函数
         self.actions = {
             'sleep': self.sleep,
@@ -91,6 +95,13 @@ class Boot(object):
             'include': self.include,
             'set_vars': self.set_vars,
             'print_vars': self.print_vars,
+            'validate_by_jsonpath': self.validate_by_jsonpath,
+            'validate_by_xpath': self.validate_by_xpath,
+            'validate_by_css': self.validate_by_css,
+            'extract_by_jsonpath': self.extract_by_jsonpath,
+            'extract_by_xpath': self.extract_by_xpath,
+            'extract_by_css': self.extract_by_css,
+            'extract_by_eval': self.extract_by_eval,
         }
 
     '''
@@ -294,8 +305,7 @@ class Boot(object):
     # :param config {url, is_ajax, data, validate_by_jsonpath, validate_by_css, validate_by_xpath, extract_by_jsonpath, extract_by_css, extract_by_xpath, extract_by_eval}
     def post(self, config = {}):
         url = self._get_url(config)
-        data = replace_var(config['data'])
-        data = ast.literal_eval(data)
+        data = replace_var(config['data'], False)
         headers = {}
         if 'is_ajax' in config and config['is_ajax']:
             headers = {
@@ -616,6 +626,27 @@ class Boot(object):
     # 后退
     def back(self, _):
         self.driver.back()
+
+    def validate_by_jsonpath(self, fields):
+        return self.validator.run_type('jsonpath', fields)
+
+    def validate_by_xpath(self, fields):
+        return self.validator.run_type('xpath', fields)
+
+    def validate_by_css(self, fields):
+        return self.validator.run_type('css', fields)
+
+    def extract_by_jsonpath(self, fields):
+        return self.extractor.run_type('jsonpath', fields)
+
+    def extract_by_xpath(self, fields):
+        return self.extractor.run_type('xpath', fields)
+
+    def extract_by_css(self, fields):
+        return self.extractor.run_type('css', fields)
+
+    def extract_by_eval(self, fields):
+        return self.extractor.run_eval(fields)
 
 # cli入口
 def main():
