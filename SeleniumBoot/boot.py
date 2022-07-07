@@ -17,19 +17,11 @@ from selenium.webdriver.support.select import Select
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.common.exceptions import NoSuchElementException
 from seleniumrequests.request import RequestsSessionMixin
 # 整合selenium-requests -- https://libraries.io/pypi/selenium-requests
 class MyWebDriver(RequestsSessionMixin, Chrome):
     pass
-
-# 扩展driver方法
-def is_element_exist(self, by):
-    try:
-        self.find_element(by)
-        return True
-    except:
-        return False
-WebDriver.is_element_exist = is_element_exist
 
 # 跳出循环的异常
 class BreakException(Exception):
@@ -70,6 +62,7 @@ class Boot(object):
             'input_by_css': self.input_by_css,
             'input_by_xpath': self.input_by_xpath,
             'click_by': self.click_by,
+            'click_by_if_exist': self.click_by_if_exist,
             'right_click_by': self.right_click_by,
             'double_click_by': self.double_click_by,
             'alert_accept': self.alert_accept,
@@ -92,6 +85,8 @@ class Boot(object):
             'once': self.once,
             'break_if': self.break_if,
             'moveon_if': self.moveon_if,
+            'moveon_if_exist_by': self.moveon_if_exist_by,
+            'break_if_not_exist_by': self.break_if_not_exist_by,
             'include': self.include,
             'set_vars': self.set_vars,
             'print_vars': self.print_vars,
@@ -103,6 +98,7 @@ class Boot(object):
             'extract_by_css': self.extract_by_css,
             'extract_by_eval': self.extract_by_eval,
         }
+        set_var('boot', self)
 
     '''
     执行入口
@@ -229,6 +225,15 @@ class Boot(object):
         if bool(val):
             raise BreakException(expr)
 
+    # 检查并继续for循环
+    def moveon_if_exist_by(self, config):
+        self.break_if_not_exist_by(config)
+
+    # 跳出for循环
+    def break_if_not_exist_by(self, config):
+        if not self.exist_by_any(config):
+            raise BreakException(config)
+
     # 加载并执行其他步骤文件
     def include(self, step_file):
         self.run_1file(step_file, True)
@@ -245,7 +250,8 @@ class Boot(object):
 
     # 睡眠
     def sleep(self, seconds):
-        time.sleep(seconds)
+        seconds = replace_var(seconds)  # 替换变量
+        time.sleep(int(seconds))
 
     # 打印
     def print(self, msg):
@@ -392,7 +398,7 @@ class Boot(object):
     # :param config {css, xpath}
     def download_img_element_by(self, config={}):
         # 获得img标签
-        img = self._find_by_any(config)
+        img = self.find_by_any(config)
         # 获得图片url
         url = img.get_attribute('src')
 
@@ -406,7 +412,7 @@ class Boot(object):
     # :param config {css, xpath}
     def download_img_elements_by(self, config={}):
         # 获得img标签
-        imgs = self._find_all_by_any(config)
+        imgs = self.find_all_by_any(config)
         save_files = [] # 记录多个下载图片
         for img in imgs:
             # 获得图片url
@@ -482,7 +488,7 @@ class Boot(object):
 
             # 找到输入框
             try:
-                ele = self._find_by(type, name)
+                ele = self.find_by(type, name)
             except Exception as ex:  # 找不到元素
                 print_exception(f"找不到输入元素{name}")
                 print_exception(str(ex))
@@ -503,11 +509,11 @@ class Boot(object):
                 ele.send_keys(value) # 后输入
 
     # 根据指定类型，查找元素
-    def _find_by(self, type, path):
+    def find_by(self, type, path):
         return self.driver.find_element(type2by(type), path)
 
     # 根据任一类型，查找元素
-    def _find_by_any(self, config):
+    def find_by_any(self, config):
         types = ['id', 'name', 'css', 'xpath']
         for type in types:
             if type in config:
@@ -518,7 +524,7 @@ class Boot(object):
         raise Exception(f"没有查找类型: {config}")
 
     # 根据任一类型，查找元素
-    def _find_all_by_any(self, config):
+    def find_all_by_any(self, config):
         types = ['id', 'name', 'css', 'xpath']
         for type in types:
             if type in config:
@@ -526,22 +532,57 @@ class Boot(object):
                 return self.driver.find_elements(type2by(type), path)
         raise Exception(f"没有查找类型: {config}")
 
+    # 根据指定类型，检查元素是否存在
+    def exist_by(self, type, path):
+        try:
+            self.find_by(type, path)
+            return True
+        except NoSuchElementException:
+            return False
+
+    # 根据任一类型，检查元素是否存在
+    def exist_by_any(self, config):
+        try:
+            self.find_by_any(config)
+            return True
+        except NoSuchElementException:
+            return False
+
+    # 根据指定类型，查找元素的文本
+    def get_text_by(self, type, path):
+        ele = self.find_by(type, path)
+        return ele.text
+
+    # 根据指定类型，检查元素的文本是否等于
+    def check_text_by(self, type, path, txt):
+        return self.get_text_by(type, path) == txt
+
     # 点击按钮
     # :param config {css, xpath}
     def click_by(self, config):
-        ele = self._find_by_any(config)
+        ele = self.find_by_any(config)
         ele.click()
+
+    # 如果按钮存在，则点击
+    # :param config {id, aid, class, xpath}
+    def click_by_if_exist(self, config):
+        try:
+            ele = self.find_by_any(config)
+        except:
+            ele = None
+        if ele != None:
+            ele.click()
 
     # 右击按钮
     # :param config {css, xpath}
     def right_click_by(self, config):
-        ele = self._find_by_any(config)
+        ele = self.find_by_any(config)
         ActionChains(self.driver).context_click(ele).perform()
 
     # 双击按钮
     # :param config {css, xpath}
     def double_click_by(self, config):
-        ele = self._find_by_any(config)
+        ele = self.find_by_any(config)
         ActionChains(self.driver).double_click(ele).perform()
 
     # 点击弹框的确定按钮
@@ -564,7 +605,7 @@ class Boot(object):
     # 切换进入iframe
     # :param config {css, xpath}
     def switch_to_frame_by(self, config):
-        ele = self._find_by_any(config)
+        ele = self.find_by_any(config)
         self.driver.switch_to.frame(ele)
 
     # 跳回到主框架页
@@ -587,7 +628,7 @@ class Boot(object):
     # 对某个标签截图存为png
     # :param config {css, xpath, save_dir, save_file}
     def screenshot_element_by(self, config):
-        ele = self._find_by_any(config)
+        ele = self.find_by_any(config)
         # 文件名
         default_file = str(time.time()).split(".")[0] + ".png" # 默认文件名
         save_file = self._prepare_save_file(config, default_file)

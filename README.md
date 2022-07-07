@@ -290,25 +290,26 @@ recognize_captcha_element:
     #save_file: test.jpg # 保存的文件名，默认为url中最后一级的文件名
 ```
 
-16. click_by: 点击指定的按钮; 
+16. click_by/click_by_if_exist: 点击指定的元素; 
 ```yaml
 click_by:
-  css: 'button[type=submit]' # 按钮的css selector模式，与xpath属性只能二选一
-  #xpath: '//button[@type="submit"]' # 按钮的xpath路径，与css属性只能二选一
+  css: 'button[type=submit]' # 元素的css selector模式，与xpath属性只能二选一
+  #xpath: '//button[@type="submit"]' # 元素的xpath路径，与css属性只能二选一
 ```
+如果点击之前要先判断元素是否存在，则换用 click_by_if_exist
 
-17. right_click_by: 右击指定的按钮; 
+17. right_click_by: 右击指定的元素; 
 ```yaml
 right_click_by:
-  css: 'button[type=submit]' # 按钮的css selector模式，与xpath属性只能二选一
-  #xpath: '//button[@type="submit"]' # 按钮的xpath路径，与css属性只能二选一
+  css: 'button[type=submit]' # 元素的css selector模式，与xpath属性只能二选一
+  #xpath: '//button[@type="submit"]' # 元素的xpath路径，与css属性只能二选一
 ```
 
-18. double_click_by: 双击指定的按钮; 
+18. double_click_by: 双击指定的元素; 
 ```yaml
 double_click_by:
-  css: 'button[type=submit]' # 按钮的css selector模式，与xpath属性只能二选一
-  #xpath: '//button[@type="submit"]' # 按钮的xpath路径，与css属性只能二选一
+  css: 'button[type=submit]' # 元素的css selector模式，与xpath属性只能二选一
+  #xpath: '//button[@type="submit"]' # 元素的xpath路径，与css属性只能二选一
 ```
 
 19. alert_accept: 点击弹框的确定按钮; 
@@ -439,12 +440,19 @@ break_if: for_i>2 # 条件表达式，python语法
 moveon_if: for_i<=2 # 条件表达式，python语法
 ```
 
-39. include: 包含其他步骤文件，如记录公共的步骤，或记录配置数据(如用户名密码); 
+39. moveon_if_exist_by: 如果检查元素存在 则往下走，否则跳出循环; 
+只能定义在for循环的子步骤中
+```yaml
+moveon_if_exist_by:
+    css: 'button[type=submit]'
+```
+
+40. include: 包含其他步骤文件，如记录公共的步骤，或记录配置数据(如用户名密码); 
 ```yaml
 include: part-common.yml
 ```
 
-40. set_vars: 设置变量; 
+41. set_vars: 设置变量; 
 ```yaml
 set_vars:
   name: shi
@@ -452,25 +460,25 @@ set_vars:
   birthday: 5-27
 ```
 
-41. print_vars: 打印所有变量; 
+42. print_vars: 打印所有变量; 
 ```yaml
 print_vars:
 ```
 
-42. set_base_url: 设置基础url
+43. set_base_url: 设置基础url
 ```yaml
 set_base_url: https://www.taobao.com/
 ```
 
 ## 校验器
-主要是为了校验响应的内容, 根据不同场景有2种写法
+主要是为了校验页面或响应的内容, 根据不同场景有2种写法
 ```
 1. 针对当前页面, 那么校验器作为普通动作来写
 2. 针对 goto/get/post/upload 有发送http请求的动作, 那么校验器在动作内作为普通属性来写
 ```
 
 1. validate_by_xpath: 
-从html的响应中解析 xpath 路径对应的元素的值
+从html的响应中校验 xpath 路径对应的元素的值
 ```yaml
 validate_by_xpath:
   "//div[@id='goods_id']": # 元素的xpath路径
@@ -480,7 +488,7 @@ validate_by_xpath:
 ```
 
 2. validate_by_css: 
-从html的响应中解析 css selector 模式对应的元素的值
+从html的响应中校验 css selector 模式对应的元素的值
 ```yaml
 validate_by_css:
   '#id': # 元素的css selector 模式
@@ -490,7 +498,7 @@ validate_by_css:
 ```
 
 3. validate_by_jsonpath: 
-从json响应中解析 多层属性 的值
+从json响应中校验 多层属性 的值
 ```yaml
 validate_by_jsonpath:
   '$.data.goods_id':
@@ -511,7 +519,7 @@ validate_by_jsonpath:
 9. `regex_match`: 正则匹配
 
 ## 提取器
-主要是为了从响应中提取变量, 根据不同场景有2种写法
+主要是为了从页面或响应中提取变量, 根据不同场景有2种写法
 ```
 1. 针对当前页面, 那么提取器作为普通动作来写
 2. 针对 goto/get/post/upload 有发送http请求的动作, 那么提取器在动作内作为普通属性来写
