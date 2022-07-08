@@ -663,7 +663,7 @@ class Boot(object):
     # 鼠标移动到指定元素
     def move_to_by(self, config):
         ele = self.find_by_any(config)
-        ActionChains(driver).move_to_element(ele).perform()
+        ActionChains(self.driver).move_to_element(ele).perform()
 
     # 刷新网页
     def refresh(self, _):
