@@ -385,22 +385,58 @@ scroll_top:
 scroll_bottom: 
 ```
 
-32. refresh: 刷新网页; 
+32. scroll_to_by: 滚动到指定元素; 
+```yaml
+scroll_to_by: 
+    css: 'button[type=submit]'
+```
+
+33. move_to_by: 鼠标移动到指定元素; 
+```yaml
+move_to_by: 
+    css: 'button[type=submit]'
+```
+
+34. refresh: 刷新网页; 
 ```yaml
 refresh: 
 ```
 
-33. forward: 前进; 
+35. forward: 前进; 
 ```yaml
 forward: 
 ```
 
-34. back: 后退; 
+36. back: 后退; 
 ```yaml
 back: 
 ```
 
-35. for: 循环; 
+37. select_all_by: 全选 ctrl + a
+```
+select_all_by:
+    css: '#name'
+```
+    
+38. copy_by: 复制 ctrl + c
+```
+copy_by:
+    css: '#name'
+```
+    
+39. clip_by: 剪切 ctrl + x
+```
+clip_by:
+    css: '#name'
+```
+    
+40. paste_by: 粘贴 ctrl + v
+```
+paste_by:
+    css: '#name'
+```
+
+41. for: 循环; 
 for动作下包含一系列子步骤，表示循环执行这系列子步骤；变量`for_i`记录是第几次迭代（从1开始）
 ```yaml
 # 循环3次
@@ -418,7 +454,7 @@ for:
     sleep: 2
 ```
 
-36. once: 只执行一次，等价于 `for(1)`; 
+42. once: 只执行一次，等价于 `for(1)`; 
 once 结合 moveon_if，可以模拟 python 的 `if` 语法效果
 ```yaml
 once:
@@ -428,31 +464,31 @@ once:
     sleep: 2
 ```
 
-37. break_if: 满足条件则跳出循环; 
+43. break_if: 满足条件则跳出循环; 
 只能定义在for循环的子步骤中
 ```yaml
 break_if: for_i>2 # 条件表达式，python语法
 ```
 
-38. moveon_if: 满足条件则往下走，否则跳出循环; 
+44. moveon_if: 满足条件则往下走，否则跳出循环; 
 只能定义在for循环的子步骤中
 ```yaml
 moveon_if: for_i<=2 # 条件表达式，python语法
 ```
 
-39. moveon_if_exist_by: 如果检查元素存在 则往下走，否则跳出循环; 
+45. moveon_if_exist_by: 如果检查元素存在 则往下走，否则跳出循环; 
 只能定义在for循环的子步骤中
 ```yaml
 moveon_if_exist_by:
     css: 'button[type=submit]'
 ```
 
-40. include: 包含其他步骤文件，如记录公共的步骤，或记录配置数据(如用户名密码); 
+46. include: 包含其他步骤文件，如记录公共的步骤，或记录配置数据(如用户名密码); 
 ```yaml
 include: part-common.yml
 ```
 
-41. set_vars: 设置变量; 
+47. set_vars: 设置变量; 
 ```yaml
 set_vars:
   name: shi
@@ -460,12 +496,12 @@ set_vars:
   birthday: 5-27
 ```
 
-42. print_vars: 打印所有变量; 
+48. print_vars: 打印所有变量; 
 ```yaml
 print_vars:
 ```
 
-43. set_base_url: 设置基础url
+49. set_base_url: 设置基础url
 ```yaml
 set_base_url: https://www.taobao.com/
 ```

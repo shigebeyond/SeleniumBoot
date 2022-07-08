@@ -17,6 +17,7 @@ from selenium.webdriver.support.select import Select
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
 from seleniumrequests.request import RequestsSessionMixin
 # 整合selenium-requests -- https://libraries.io/pypi/selenium-requests
@@ -385,9 +386,7 @@ class Boot(object):
         # 发请求
         res = self.driver.request('GET', url)
         # 保存响应的文件
-        file = open(save_file, 'wb')
-        file.write(res.content)
-        file.close()
+        write_byte_file(save_file, res.content)
         # 设置变量
         set_var('download_file', save_file)
         self.downloaded_files[url] = save_file
@@ -635,8 +634,8 @@ class Boot(object):
         ele.screenshot(save_file)
 
     # 执行js
-    def execute_js(self, js):
-        self.driver.execute_script(js)
+    def execute_js(self, js, *args):
+        self.driver.execute_script(js, *args)
 
     # 滚动到指定位置
     def scroll(self, pos):
@@ -656,6 +655,16 @@ class Boot(object):
         js = f'window.scrollTo({x}, {y})'
         self.execute_js(js)
 
+    # 滚动到指定元素
+    def scroll_to_by(self, config):
+        ele = self.find_by_any(config)
+        self.execute_js("arguments[0].scrollIntoView(false);", ele)
+
+    # 鼠标移动到指定元素
+    def move_to_by(self, config):
+        ele = self.find_by_any(config)
+        ActionChains(driver).move_to_element(ele).perform()
+
     # 刷新网页
     def refresh(self, _):
         self.driver.refresh()
@@ -667,6 +676,26 @@ class Boot(object):
     # 后退
     def back(self, _):
         self.driver.back()
+
+    # 全选 ctrl + a
+    def select_all_by(self, config):
+        ele = self.find_by_any(config)
+        ele.send_keys(Keys.CONTROL, 'a')
+
+    # 复制 ctrl + c
+    def copy_by(self, config):
+        ele = self.find_by_any(config)
+        ele.send_keys(Keys.CONTROL, 'c')
+
+    # 剪切 ctrl + x
+    def clip_by(self, config):
+        ele = self.find_by_any(config)
+        ele.send_keys(Keys.CONTROL, 'x')
+
+    # 粘贴 ctrl + v
+    def paste_by(self, config):
+        ele = self.find_by_any(config)
+        ele.send_keys(Keys.CONTROL, 'v')
 
     def validate_by_jsonpath(self, fields):
         return self.validator.run_type('jsonpath', fields)
