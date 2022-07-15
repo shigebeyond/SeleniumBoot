@@ -188,4 +188,10 @@ def type2by(type):
         return By.CSS_SELECTOR
     if type == 'xpath':
         return By.XPATH
+    if type == 'tag':
+        return By.TAG_NAME
+    if type == 'link_text': # 精确匹配<a>的全部文本
+        return By.LINK_TEXT
+    if type == 'partial_link_text': # 匹配<a>的部分文本
+        return By.PARTIAL_LINK_TEXT
     raise Exception(f"不支持查找类型: {type}")

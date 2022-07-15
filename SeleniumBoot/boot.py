@@ -40,7 +40,7 @@ class Boot(object):
         # 已下载过的url对应的文件，key是url，value是文件
         self.downloaded_files = {}
         # 基础url
-        self.base_url = None
+        self._base_url = None
         # 当前页面的校验器
         self.validator = validator.Validator(self.driver)
         # 当前页面的提取器
@@ -49,6 +49,7 @@ class Boot(object):
         self.actions = {
             'sleep': self.sleep,
             'print': self.print,
+            'base_url': self.base_url,
             'goto': self.goto,
             'get': self.get,
             'post': self.post,
@@ -271,16 +272,16 @@ class Boot(object):
         e.run(config)
 
     # 设置基础url
-    def set_base_url(self, url):
-        self.base_url = url
+    def base_url(self, url):
+        self._base_url = url
 
     # 拼接url
     def _get_url(self, config):
         url = config['url']
         url = replace_var(url)  # 替换变量
         # 添加基url
-        if (self.base_url is not None) and ("http" not in url):
-            url = self.base_url + url
+        if (self._base_url is not None) and ("http" not in url):
+            url = self._base_url + url
         return url
 
     # 跳转
@@ -295,15 +296,16 @@ class Boot(object):
         self._analyze_response(None, config)
 
     # get请求
-    # :param config {url, is_ajax, validate_by_jsonpath, validate_by_css, validate_by_xpath, extract_by_jsonpath, extract_by_css, extract_by_xpath, extract_by_eval}
+    # :param config {url, is_ajax, data, validate_by_jsonpath, validate_by_css, validate_by_xpath, extract_by_jsonpath, extract_by_css, extract_by_xpath, extract_by_eval}
     def get(self, config = {}):
         url = self._get_url(config)
+        data = replace_var(config['data'], False)
         headers = {}
         if 'is_ajax' in config and config['is_ajax']:
             headers = {
                 'X-Requested-With': 'XMLHttpRequest'
             }
-        res = self.driver.request('GET', url, headers=headers)
+        res = self.driver.request('GET', url, headers=headers, data=data)
         # print(res.text)
         # 解析响应
         self._analyze_response(res, config)

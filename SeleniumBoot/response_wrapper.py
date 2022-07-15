@@ -56,7 +56,7 @@ class ResponseWrap(object):
 
             raise Exception(f"goto的响应不支持查找类型: {type}")
 
-        if type == 'id' or type == 'name':
+        if type == 'id' or type == 'name' or type == 'tag' or type == 'link_text' or type == 'partial_link_text':
             return self.driver.find_element(type2by(type), path).text
 
         raise Exception(f"不支持查找类型: {type}")
