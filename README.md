@@ -33,6 +33,13 @@ Selenium是基于浏览器的自动化测试工具，但是要写python代码；
 pip3 install SeleniumBoot
 ```
 
+安装后会生成命令`SeleniumBoot`;
+
+注： 对于深度deepin-linux系统，生成的命令放在目录`~/.local/bin`，建议将该目录添加到环境变量`PATH`中，如
+```
+export PATH="$PATH:/home/shi/.local/bin"
+```
+
 ## 使用
 ```
 # 1 执行单个文件

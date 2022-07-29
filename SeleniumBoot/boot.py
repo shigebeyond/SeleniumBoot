@@ -6,8 +6,8 @@ import sys
 import os
 import fnmatch
 from pathlib import Path
-from SeleniumBoot.ocr import *
-from SeleniumBoot.util import *
+from pyutilb.util import *
+from pyutilb import log, ocr_youdao
 import ast
 from SeleniumBoot.validator import Validator
 from SeleniumBoot.extractor import Extractor
@@ -152,7 +152,7 @@ class Boot(object):
             step_file = os.path.abspath(step_file)
             self.step_dir = os.path.dirname(step_file)
 
-        print(f"加载并执行步骤文件: {step_file}")
+        log.debug(f"加载并执行步骤文件: {step_file}")
         # 获得步骤
         steps = read_yaml(step_file)
 
@@ -161,7 +161,7 @@ class Boot(object):
             # 执行多个步骤
             self.run_steps(steps)
         except Exception as ex:
-            print(f"异常环境:当前步骤文件为 {step_file}, 当前url为 {self.driver.current_url}")
+            log.debug(f"异常环境:当前步骤文件为 {step_file}, 当前url为 {self.driver.current_url}")
             raise ex
 
     # 执行多个步骤
@@ -186,7 +186,7 @@ class Boot(object):
             raise Exception(f'无效动作: [{action}]')
 
         # 调用动作对应的函数
-        print(f"处理动作: {action}={param}")
+        log.debug(f"处理动作: {action}={param}")
         func = self.actions[action]
         func(param)
 
@@ -199,17 +199,17 @@ class Boot(object):
         if n == None:
             n = sys.maxsize # 最大int，等于无限循环次数
             label = f"for(∞)"
-        print(f"-- 开始循环: {label} -- ")
+        log.debug(f"-- 开始循环: {label} -- ")
         try:
             for i in range(n):
                 # i+1表示迭代次数比较容易理解
-                print(f"第{i+1}次迭代")
+                log.debug(f"第{i+1}次迭代")
                 set_var('for_i', i+1)
                 self.run_steps(steps)
         except BreakException as e:  # 跳出循环
-            print(f"-- 跳出循环: {label}, 跳出条件: {e.condition} -- ")
+            log.debug(f"-- 跳出循环: {label}, 跳出条件: {e.condition} -- ")
         else:
-            print(f"-- 结束循环: {label} -- ")
+            log.debug(f"-- 结束循环: {label} -- ")
 
     # 执行一次子步骤，相当于 for(1)
     def once(self, steps):
@@ -247,7 +247,7 @@ class Boot(object):
 
     # 打印变量
     def print_vars(self, _):
-        print(f"打印变量: {bvars}")
+        log.info(f"打印变量: {bvars}")
 
     # 睡眠
     def sleep(self, seconds):
@@ -257,7 +257,7 @@ class Boot(object):
     # 打印
     def print(self, msg):
         msg = replace_var(msg)  # 替换变量
-        print(msg)
+        log.debug(msg)
 
     # 解析响应
     def _analyze_response(self, res, config):
@@ -305,7 +305,7 @@ class Boot(object):
                 'X-Requested-With': 'XMLHttpRequest'
             }
         res = self.driver.request('GET', url, headers=headers, data=data)
-        # print(res.text)
+        # log.debug(res.text)
         # 解析响应
         self._analyze_response(res, config)
 
@@ -391,7 +391,7 @@ class Boot(object):
         # 设置变量
         set_var('download_file', save_file)
         self.downloaded_files[url] = save_file
-        print(f"下载文件: url为{url}, 另存为{save_file}")
+        log.debug(f"下载文件: url为{url}, 另存为{save_file}")
         return save_file
 
     # 从图片标签中下载图片
@@ -448,7 +448,7 @@ class Boot(object):
         captcha = ocr_youdao.recognize_text(file_path)
         # 设置变量
         set_var('captcha', captcha)
-        print(f"识别验证码: 图片为{file_path}, 验证码为{captcha}")
+        log.debug(f"识别验证码: 图片为{file_path}, 验证码为{captcha}")
         # 删除文件
         #os.remove(file)
 
@@ -483,7 +483,7 @@ class Boot(object):
     # :param input_data 表单数据, key是输入框的路径, value是填入的值
     def _input_by_type_and_data(self, type, input_data):
         for name, value in input_data.items():
-            print(f"替换变量： {name} = {value}")
+            log.debug(f"替换变量： {name} = {value}")
             value = replace_var(value)  # 替换变量
 
             # 找到输入框
