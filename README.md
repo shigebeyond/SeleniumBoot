@@ -58,6 +58,7 @@ SeleniumBoot 步骤配置目录/step-*.yml
 下载文件: url为https://www.mn52.com/img/allimg/2021-04-27/213fbbec-22f2-4ae4-9f90-15126d980d56_5f895f29a9d5a.jpg, 另存为/ohome/shi/code/python/SeleniumBoot/downloads/213fbbec-22f2-4ae4-9f90-15126d980d56_5fd5a.jpg
 ......
 ```
+命令会自动打开浏览器，自动跳转，自动下载图片
 
 ## 步骤配置文件及demo
 用于指定多个步骤, 示例见源码 [example](https://github.com/shigebeyond/SeleniumBoot/tree/main/example) 目录下的文件;
