@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import re
-from util import *
+from SeleniumBoot.util import *
 from lxml import etree
 from requests import Response
 from selenium import webdriver
