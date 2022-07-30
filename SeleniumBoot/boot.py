@@ -100,6 +100,8 @@ class Boot(object):
             'extract_by_eval': self.extract_by_eval,
         }
         set_var('boot', self)
+        # 当前文件
+        self.step_file = None
 
     '''
     执行入口
@@ -155,14 +157,9 @@ class Boot(object):
         log.debug(f"加载并执行步骤文件: {step_file}")
         # 获得步骤
         steps = read_yaml(step_file)
-
-        steps = read_yaml(step_file)
-        try:
-            # 执行多个步骤
-            self.run_steps(steps)
-        except Exception as ex:
-            log.debug(f"异常环境:当前步骤文件为 {step_file}, 当前url为 {self.driver.current_url}")
-            raise ex
+        self.step_file = step_file
+        # 执行多个步骤
+        self.run_steps(steps)
 
     # 执行多个步骤
     def run_steps(self, steps):
@@ -298,7 +295,9 @@ class Boot(object):
     # :param config {url, is_ajax, data, validate_by_jsonpath, validate_by_css, validate_by_xpath, extract_by_jsonpath, extract_by_css, extract_by_xpath, extract_by_eval}
     def get(self, config = {}):
         url = self._get_url(config)
-        data = replace_var(config['data'], False)
+        data = None
+        if 'data' in config:
+            data = replace_var(config['data'], False)
         headers = {}
         if 'is_ajax' in config and config['is_ajax']:
             headers = {
@@ -490,8 +489,7 @@ class Boot(object):
             try:
                 ele = self.find_by(type, name)
             except Exception as ex:  # 找不到元素
-                print_exception(f"找不到输入元素{name}")
-                print_exception(str(ex))
+                log.error(f"找不到输入元素{name}", exc_info = ex)
                 continue
 
             if ele.tag_name == 'select': # 设置输入框
@@ -729,14 +727,19 @@ def main():
     driver = MyWebDriver(options=option)
     # 基于yaml的执行器
     boot = Boot(driver)
-    # 步骤配置的yaml
-    if len(sys.argv) > 1:
-        step_files = sys.argv[1:]
-    else:
-        raise Exception("未指定步骤配置文件或目录")
-    # 执行yaml配置的步骤
-    boot.run(step_files)
-    driver.quit()
+    try:
+        # 步骤配置的yaml
+        if len(sys.argv) > 1:
+            step_files = sys.argv[1:]
+        else:
+            raise Exception("未指定步骤配置文件或目录")
+        # 执行yaml配置的步骤
+        boot.run(step_files)
+    except Exception as ex:
+        log.error(f"异常环境:当前步骤文件为 {boot.step_file}, 当前url为 {driver.current_url}", exc_info = ex)
+        raise ex
+    finally:
+        driver.quit()
 
 
 if __name__ == '__main__':

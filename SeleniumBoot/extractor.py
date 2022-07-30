@@ -4,7 +4,7 @@
 from requests import Response
 from selenium import webdriver
 from SeleniumBoot.response_wrapper import ResponseWrap
-from pyutilb.util import set_var,get_var
+from pyutilb.util import *
 import json # eval 可能会用到
 import re
 from pyutilb import log
