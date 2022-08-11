@@ -546,15 +546,6 @@ class Boot(object):
         except NoSuchElementException:
             return False
 
-    # 根据指定类型，查找元素的文本
-    def get_text_by(self, type, path):
-        ele = self.find_by(type, path)
-        return ele.text
-
-    # 根据指定类型，检查元素的文本是否等于
-    def check_text_by(self, type, path, txt):
-        return self.get_text_by(type, path) == txt
-
     # 点击按钮
     # :param config {css, xpath}
     def click_by(self, config):
