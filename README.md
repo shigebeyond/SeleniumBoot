@@ -75,19 +75,19 @@ SeleniumBoot 步骤配置目录/step-*.yml
 每个步骤里有多个动作(如goto/sleep/submit_form)，如果动作有重名，就另外新开一个步骤写动作，这是由yaml语法限制导致的，但不影响步骤执行。
 
 简单贴出2个demo
-1. 下载图片: 详见 [example/step-mn52.yml](https://github.com/shigebeyond/SeleniumBoot/blob/main/example/step-mn52.yml)
+1. 下载图片: 详见 [example/step-netbian.yml](https://github.com/shigebeyond/SeleniumBoot/blob/main/example/step-netbian.yml), [演示视频](https://www.zhihu.com/zvideo/1542455008884322304)
 ```yaml
 # 下载美女图
 - # 首页
   goto:
-    url: https://www.mn52.com/
+    url: https://pic.netbian.com/4kmeinv/index.html
   # 下载多个图片
   download_img_elements_by:
-    xpath: '//img[@class="img-responsive"]'
-    save_dir: downloads
+    xpath: '//ul[@class="clearfix"]/li/a/img'
+    #save_dir: downloads # 默认downloads，可不填
 ```
 
-2. 内部项目测试: 详见 [example/step-jym.yml](https://github.com/shigebeyond/SeleniumBoot/blob/main/example/step-jym.yml)
+2. 内部项目测试: 详见 [example/step-jym.yml](https://github.com/shigebeyond/SeleniumBoot/blob/main/example/step-jym.yml), [演示视频](https://www.zhihu.com/zvideo/1542453686449471488)
 ```yaml
 - # 登录
   goto:
