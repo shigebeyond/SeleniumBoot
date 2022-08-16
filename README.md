@@ -368,9 +368,10 @@ switch_to_frame_by:
 switch_to_frame_out: 
 ```
 
-26. switch_to_window: 切到第几个窗口; 
+26. switch_to_window: 切到第几个窗口(页签), 从0开始, 支持负数; 
 ```yaml
-switch_to_window: 1 # 切到第1个窗口
+switch_to_window: 1 # 切到第2个窗口(页签)
+switch_to_window: -1 # 切到最后一个窗口(页签)
 ```
 
 27. screenshot: 整个窗口截图存为png; 
