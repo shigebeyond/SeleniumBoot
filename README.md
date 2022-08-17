@@ -155,6 +155,12 @@ SeleniumBoot 步骤配置目录/step-*.yml
   sleep: 2
 ```
 
+## 查找元素的方法
+1. id: 根据 name 属性值来查找, 对应`By.ID`
+2. name: 根据 name 属性值来查找, 对应`By.NAME`
+3. css: 根据 css selector 来查找, 对应`By.CSS_SELECTOR` 
+4. xpath: 根据 xpath 来查找, 对应`By.XPATH`
+
 ## 配置详解
 支持通过yaml来配置执行的步骤;
 
@@ -361,6 +367,7 @@ resize_window: 100,200 # 宽,高
 switch_to_frame_by:
   css: 'iframe#main' # iframe的css selector模式，与xpath属性只能二选一
   #xpath: '//iframe[@id="main"]' # iframe的xpath路径，与css属性只能二选一
+switch_to_frame_by: # 参数可省, 默认是进入第一个iframe 
 ```
 
 25. switch_to_frame_out: 跳回到主框架页; 
