@@ -531,6 +531,12 @@ print_vars:
 base_url: https://www.taobao.com/
 ```
 
+51. exec: 执行命令, 可用于执行 HttpBoot/SeleniumBoot/AppiumBoot/MiniumBoot 等命令，以便打通多端的用例流程
+```yaml
+exec: ls
+exec: SeleniumBoot test.yml
+```
+
 ## 校验器
 主要是为了校验页面或响应的内容, 根据不同场景有2种写法
 ```
