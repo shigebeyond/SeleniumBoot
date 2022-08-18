@@ -544,9 +544,10 @@ exec: ls
 exec: SeleniumBoot test.yml
 ```
 
-51. close_driver: 关闭浏览器，框架默认不关闭
+51. close_driver: 关闭浏览器, 框架不自动关闭, 需手动关闭
 ```yaml
 close_driver:
+close_driver: True # 参数控制是否在异常时关闭浏览器, 默认为False
 ```
 
 ## 校验器

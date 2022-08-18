@@ -104,6 +104,8 @@ class Boot(object):
         set_var('boot', self)
         # 当前文件
         self.step_file = None
+        # 是否在异常时关闭浏览器
+        self.close_on_exception = None
 
     '''
     执行入口
@@ -165,6 +167,12 @@ class Boot(object):
 
     # 执行多个步骤
     def run_steps(self, steps):
+        # 设置是否在异常时关闭浏览器: 优先取异常不关闭(false), 因此遇到异常关闭(true)就再读一次
+        if self.close_on_exception == None or self.close_on_exception == True:
+            v = self.get_close_on_exception(steps)
+            if v != None:
+                self.close_on_exception = v
+
         # 逐个步骤调用多个动作
         for step in steps:
             for action, param in step.items():
@@ -717,10 +725,21 @@ class Boot(object):
         output = os.popen(cmd).read()
         log.debug(f"执行命令: {cmd} | 结果: {output}")
 
-    # 关闭
-    def close_driver(self, _):
-        if self.driver != None:
-            self.driver.close()
+    # 关闭driver(浏览器)
+    def close_driver(self, close_on_exception):
+        self.driver.quit()
+
+    # 获得close_driver动作的参数: 是否在异常时关闭浏览器
+    def get_close_on_exception(self, steps):
+        # 逐个步骤检查 close_driver 动作
+        for step in steps:
+            for action, param in step.items():
+                if action == 'close_driver':
+                    if param == None: # 默认为异常不关闭
+                        return False
+                    return bool(param)
+
+        return None
 
 # cli入口
 def main():
@@ -743,8 +762,9 @@ def main():
     except Exception as ex:
         log.error(f"异常环境:当前步骤文件为 {boot.step_file}, 当前url为 {driver.current_url}", exc_info = ex)
         raise ex
-    # finally: # 手动调用 close_driver
-    #     driver.quit()
+    finally:
+        if boot.close_on_exception:
+            driver.quit()
 
 
 if __name__ == '__main__':
