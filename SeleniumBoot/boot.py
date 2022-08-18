@@ -99,6 +99,7 @@ class Boot(object):
             'extract_by_css': self.extract_by_css,
             'extract_by_eval': self.extract_by_eval,
             'exec': self.exec,
+            'close_driver': self.close_driver
         }
         set_var('boot', self)
         # 当前文件
@@ -716,6 +717,11 @@ class Boot(object):
         output = os.popen(cmd).read()
         log.debug(f"执行命令: {cmd} | 结果: {output}")
 
+    # 关闭
+    def close_driver(self, _):
+        if self.driver != None:
+            self.driver.close()
+
 # cli入口
 def main():
     global driver
@@ -737,8 +743,8 @@ def main():
     except Exception as ex:
         log.error(f"异常环境:当前步骤文件为 {boot.step_file}, 当前url为 {driver.current_url}", exc_info = ex)
         raise ex
-    finally:
-        driver.quit()
+    # finally: # 手动调用 close_driver
+    #     driver.quit()
 
 
 if __name__ == '__main__':

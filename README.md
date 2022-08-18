@@ -544,6 +544,11 @@ exec: ls
 exec: SeleniumBoot test.yml
 ```
 
+51. close_driver: 关闭浏览器，框架默认不关闭
+```yaml
+close_driver:
+```
+
 ## 校验器
 主要是为了校验页面或响应的内容, 根据不同场景有2种写法
 ```

@@ -1,0 +1,46 @@
+- include : jym_lg.yml
+
+#打开门店列表
+- goto:
+    url: http://admin.jym1.com/store/store_list
+  sleep: 2
+
+#新增门店
+- goto:
+    url: http://admin.jym1.com/store/add_store
+
+  upload:
+    url: http://admin.jym1.com/upload/common_upload_img/store_img
+    files:
+      file: /home/hww/Pictures/Wallpapers/1.jpg
+    extract_by_jsonpath:
+      img: $.data.url
+  post:
+    url: http://admin.jym1.com/store/add_store
+    is_ajax: true
+    data:
+      store_name: jymsore_${random_str(2)}
+      store_logo_url: '$img'
+      store_img_urls: '["$img"]'
+      province: 450000
+      city: 450100
+      district: 450102
+      address: '详细地址'
+      phone: 18878878${random_int(3)}
+      business_day_from: 1
+      business_day_to: 0
+      work_start_time: 09:00:00 - 20:00:00
+      store_type: 0
+      licence_url: '$img'
+      license_code: 91450100788439413D
+      card_true_name: hehe
+      bank_name : 中国工商银行
+      bank_card_num: 6222024100018669328
+      store_work_time: '["{\"date_from\":\"1\",\"date_to\":\"1\",\"work_start_time\":\"09:00:00\",\"work_end_time\":\"20:00:00\"}"]'
+    validate_by_jsonpath:
+      '$.success':
+        '=': true # 校验符号或函数: 校验的值, 即 id 元素的值>0
+- # 门店列表,查看新建门店
+  goto:
+    url: http://admin.jym1.com/store/store_list
+  sleep: 2

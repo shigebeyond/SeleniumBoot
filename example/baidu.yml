@@ -1,0 +1,22 @@
+#打开百度
+-
+  goto:
+    url: https://www.baidu.com/
+  input_by_name:
+      wd: '"软件测试"'
+  click_by:
+    #id: su
+    css: '#su'
+  sleep: 4
+- click_by:
+    xpath: //*[@id="1"]/div/div[1]/h3/a
+  sleep: 1
+- switch_to_window: -1 # 切到最后的页签
+  sleep: 1
+  scroll_bottom:
+- switch_to_window: 0 # 切到最后的页签
+  sleep: 1
+  scroll_bottom:
+- include: login.yml
+- include: register.yml
+- include: order.yml # pageobject

@@ -1,0 +1,7 @@
+- goto:
+    url: http://admin.jym1.com/login/index
+    #提交表单
+  submit_form:
+    account: '18877310999'
+    passwd: '123456'
+  sleep: 2

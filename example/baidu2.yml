@@ -1,0 +1,14 @@
+#百度
+- goto:
+    url : https://www.baidu.com/
+- input_by_name :
+      wd: '"软件测试"'
+- click_by:
+      id: su
+  sleep: 2
+- click_by:
+      xpath: //*[@id="1"]/div/div/h3/a
+- sleep: 2
+- switch_to_window: -1
+  sleep: 2
+- scroll_bottom:
