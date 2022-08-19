@@ -14,15 +14,15 @@ class Validator(ResponseWrap):
         super(Validator, self).__init__(driver, res)
         # 校验函数映射
         self.funcs = {
-            '=': lambda val, param, _: val == param,
-            '>': lambda val, param, _: float(val) > param,
-            '<': lambda val, param, _: float(val) < param,
-            '>=': lambda val, param, _: float(val) >= param,
-            '<=': lambda val, param, _: float(val) <= param,
-            'contains': lambda val, param, _: param in val,
-            'startswith': lambda val, param, _: val.startswith(param),
-            'endswith': lambda val, param, _: val.endswith(param),
-            'regex_match': lambda val, param, _: re.search(param, val) != None,
+            '=': lambda val, param, ex: ex == None and val == param,
+            '>': lambda val, param, ex: ex == None and float(val) > param,
+            '<': lambda val, param, ex: ex == None and float(val) < param,
+            '>=': lambda val, param, ex: ex == None and float(val) >= param,
+            '<=': lambda val, param, ex: ex == None and float(val) <= param,
+            'contains': lambda val, param, ex: ex == None and param in val,
+            'startswith': lambda val, param, ex: ex == None and val.startswith(param),
+            'endswith': lambda val, param, ex: ex == None and val.endswith(param),
+            'regex_match': lambda val, param, ex: ex == None and re.search(param, val) != None,
             'exists': lambda val, param, ex: ex == None,
             'not_exist': lambda val, param, ex: ex != None,
         }
