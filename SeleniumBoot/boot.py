@@ -656,8 +656,8 @@ class Boot(object):
     # 切换进入iframe
     # :param config {css, xpath}
     def switch_to_frame_by(self, config):
-        if config == None: # 默认进入第一个iframe
-            config = {'css': 'iframe'}
+        if config == None: # 默认进入最后一个iframe
+            config = {'css': 'iframe:last-child'}
         ele = self.find_by_any(config)
         self.driver.switch_to.frame(ele)
 
