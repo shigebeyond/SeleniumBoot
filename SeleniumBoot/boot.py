@@ -31,21 +31,19 @@ class BreakException(Exception):
 # selenium基于yaml的启动器
 class Boot(object):
 
-    def __init__(self, driver: MyWebDriver):
+    def __init__(self):
         # webdriver
-        self.driver = driver
+        self.driver = None
         # 步骤文件所在的目录
         self.step_dir = None
         # 已下载过的url对应的文件，key是url，value是文件
         self.downloaded_files = {}
         # 基础url
         self._base_url = None
-        # 当前页面的校验器
-        self.validator = Validator(self.driver)
-        # 当前页面的提取器
-        self.extractor = Extractor(self.driver)
         # 动作映射函数
         self.actions = {
+            'auto_close': self.auto_close,
+            'close_driver': self.close_driver,
             'sleep': self.sleep,
             'print': self.print,
             'base_url': self.base_url,
@@ -99,13 +97,12 @@ class Boot(object):
             'extract_by_css': self.extract_by_css,
             'extract_by_eval': self.extract_by_eval,
             'exec': self.exec,
-            'close_driver': self.close_driver
         }
         set_var('boot', self)
         # 当前文件
         self.step_file = None
-        # 是否在异常时关闭浏览器
-        self.close_on_exception = None
+        # 自动关闭选项
+        self.auto_close_option = {}
 
     '''
     执行入口
@@ -167,11 +164,9 @@ class Boot(object):
 
     # 执行多个步骤
     def run_steps(self, steps):
-        # 设置是否在异常时关闭浏览器: 优先取异常不关闭(false), 因此遇到异常关闭(true)就再读一次
-        if self.close_on_exception == None or self.close_on_exception == True:
-            v = self.get_close_on_exception(steps)
-            if v != None:
-                self.close_on_exception = v
+        # 延迟初始化driver
+        if self.driver == None:
+            self.init_driver()
 
         # 逐个步骤调用多个动作
         for step in steps:
@@ -198,6 +193,57 @@ class Boot(object):
         func(param)
 
     # --------- 动作处理的函数 --------
+    # 初始化driver
+    def init_driver(self, _ = None):
+        if self.driver != None:
+            return
+
+        # 浏览器驱动
+        option = ChromeOptions()
+        option.add_experimental_option('excludeSwitches', ['enable-automation'])
+        # self.driver = Chrome(options=option)
+        self.driver = MyWebDriver(options=option)
+        # 当前页面的校验器, 依赖于driver
+        self.validator = Validator(self.driver)
+        # 当前页面的提取器, 依赖于driver
+        self.extractor = Extractor(self.driver)
+
+    # 关闭driver(浏览器)
+    def close_driver(self, _ = None):
+        if self.driver != None:
+            self.driver.quit()
+            self.driver = None
+
+    # 设置自动关闭
+    def auto_close(self, option):
+        if option != None:
+            self.auto_close_option = option
+
+    # 是否在完成时关闭浏览器
+    @property
+    def close_on_finish(self):
+        option = self.auto_close_option
+        if 'on_finish' in option:
+            return bool(option['on_finish'])
+
+        return False
+
+    # 是否在异常时关闭浏览器
+    @property
+    def close_on_exception(self):
+        option = self.auto_close_option
+        if 'on_exception' in option:
+            return bool(option['on_exception'])
+
+        return False
+
+    # 当前url
+    @property
+    def current_url(self):
+        if self.driver == None:
+            return None
+        return self.driver.current_url
+
     # for循环
     # :param steps 每个迭代中要执行的步骤
     # :param n 循环次数
@@ -294,7 +340,7 @@ class Boot(object):
     # :param config {url, validate_by_jsonpath, validate_by_css, validate_by_xpath, extract_by_jsonpath, extract_by_css, extract_by_xpath, extract_by_eval}
     def goto(self, config = {}):
         url = self._get_url(config)
-        driver.get(url)
+        self.driver.get(url)
         # fix bug: 如果跳到table页，会异步加载，必须等加载完才能解析table，因此等等
         time.sleep(2)
 
@@ -725,32 +771,10 @@ class Boot(object):
         output = os.popen(cmd).read()
         log.debug(f"执行命令: {cmd} | 结果: {output}")
 
-    # 关闭driver(浏览器)
-    def close_driver(self, close_on_exception):
-        self.driver.quit()
-
-    # 获得close_driver动作的参数: 是否在异常时关闭浏览器
-    def get_close_on_exception(self, steps):
-        # 逐个步骤检查 close_driver 动作
-        for step in steps:
-            for action, param in step.items():
-                if action == 'close_driver':
-                    if param == None: # 默认为异常不关闭
-                        return False
-                    return bool(param)
-
-        return None
-
 # cli入口
 def main():
-    global driver
-    # 浏览器驱动
-    option = ChromeOptions()
-    option.add_experimental_option('excludeSwitches', ['enable-automation'])
-    # driver = Chrome(options=option)
-    driver = MyWebDriver(options=option)
     # 基于yaml的执行器
-    boot = Boot(driver)
+    boot = Boot()
     try:
         # 步骤配置的yaml
         if len(sys.argv) > 1:
@@ -759,13 +783,15 @@ def main():
             raise Exception("未指定步骤配置文件或目录")
         # 执行yaml配置的步骤
         boot.run(step_files)
+        # 完成时关闭浏览器
+        if boot.close_on_finish:
+            boot.close_driver()
     except Exception as ex:
-        log.error(f"异常环境:当前步骤文件为 {boot.step_file}, 当前url为 {driver.current_url}", exc_info = ex)
-        raise ex
-    finally:
+        log.error(f"异常环境:当前步骤文件为 {boot.step_file}, 当前url为 {boot.current_url}", exc_info = ex)
+        # 异常时关闭浏览器
         if boot.close_on_exception:
-            driver.quit()
-
+            boot.close_driver()
+        raise ex
 
 if __name__ == '__main__':
     main()

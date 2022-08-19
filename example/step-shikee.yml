@@ -1,3 +1,6 @@
+- auto_close:
+    on_finish: true # 完成时关闭浏览器, 默认为false
+    on_exception: false # 异常时关闭浏览器, 默认为false
 - # 首页
   goto:
     url: http://www.shikee.com/
