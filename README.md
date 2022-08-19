@@ -379,7 +379,7 @@ resize_window: 100,200 # 宽,高
 switch_to_frame_by:
   css: 'iframe#main' # iframe的css selector模式，与xpath属性只能二选一
   #xpath: '//iframe[@id="main"]' # iframe的xpath路径，与css属性只能二选一
-switch_to_frame_by: # 参数可省, 默认是进入第一个iframe 
+switch_to_frame_by: # 参数可省, 默认是进入最后一个iframe 
 ```
 
 27. switch_to_frame_out: 跳回到主框架页; 
