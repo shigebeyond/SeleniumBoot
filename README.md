@@ -169,6 +169,7 @@ SeleniumBoot 步骤配置目录/step-*.yml
 动作代表webdriver上的一种操作，如goto/get/post/upload/submit_form等等;
 
 下面详细介绍每个动作:
+
 1. auto_close: 设置自动关闭浏览器的选项
 ```yaml
 auto_close:
@@ -508,30 +509,37 @@ once:
 ```
 
 46. break_if: 满足条件则跳出循环; 
-只能定义在for循环的子步骤中
+只能定义在for/once循环的子步骤中
 ```yaml
 break_if: for_i>2 # 条件表达式，python语法
 ```
 
 47. moveon_if: 满足条件则往下走，否则跳出循环; 
-只能定义在for循环的子步骤中
+只能定义在for/once循环的子步骤中
 ```yaml
 moveon_if: for_i<=2 # 条件表达式，python语法
 ```
 
 48. moveon_if_exist_by: 如果检查元素存在 则往下走，否则跳出循环; 
-只能定义在for循环的子步骤中
+只能定义在for/once循环的子步骤中
 ```yaml
 moveon_if_exist_by:
     css: 'button[type=submit]'
 ```
 
-49. include: 包含其他步骤文件，如记录公共的步骤，或记录配置数据(如用户名密码); 
+49. break_if_exist_by: 如果检查元素存在 则跳出循环，否则往下走; 
+只能定义在for/once循环的子步骤中
+```yaml
+break_if_exist_by:
+    id: button1
+```
+
+50. include: 包含其他步骤文件，如记录公共的步骤，或记录配置数据(如用户名密码); 
 ```yaml
 include: part-common.yml
 ```
 
-50. set_vars: 设置变量; 
+51. set_vars: 设置变量; 
 ```yaml
 set_vars:
   name: shi
@@ -539,17 +547,17 @@ set_vars:
   birthday: 5-27
 ```
 
-51. print_vars: 打印所有变量; 
+52. print_vars: 打印所有变量; 
 ```yaml
 print_vars:
 ```
 
-52. base_url: 设置基础url
+53. base_url: 设置基础url
 ```yaml
 base_url: https://www.taobao.com/
 ```
 
-53. exec: 执行命令, 可用于执行 HttpBoot/SeleniumBoot/AppiumBoot/MiniumBoot 等命令，以便打通多端的用例流程
+54. exec: 执行命令, 可用于执行 HttpBoot/SeleniumBoot/AppiumBoot/MiniumBoot 等命令，以便打通多端的用例流程
 ```yaml
 exec: ls
 exec: SeleniumBoot test.yml
