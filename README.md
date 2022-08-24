@@ -626,6 +626,7 @@ validate_by_jsonpath:
 extract_by_xpath:
   # 变量名: xpath路径
   goods_id: //table/tbody/tr[1]/td[1] # 第一行第一列
+  url: //*[@id="1"]/div/div/h3/a/@href # 获得<a>的href属性 
 ```
 
 2. extract_by_css:
@@ -634,6 +635,7 @@ extract_by_xpath:
 extract_by_css:
   # 变量名: css selector 模式
   goods_id: table>tbody>tr:nth-child(1)>td:nth-child(1) # 第一行第一列
+  url: '#\31  > div > div > h3 > a::attr(href)' # 获得<a>的href属性
 ```
 
 3. extract_by_jsonpath:
