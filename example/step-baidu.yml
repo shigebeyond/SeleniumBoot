@@ -8,8 +8,12 @@
     #id: su
     css: '#su'
   sleep: 4
+- extract_by_xpath:
+    url1: //*[@id="1"]/div/div/h3/a/@href # 获得<a>的href属性
+- extract_by_css:
+    url2: '#\31  > div > div > h3 > a::attr(href)' # 获得<a>的href属性
 - click_by:
-    xpath: //*[@id="1"]/div/div[1]/h3/a
+    xpath: //*[@id="1"]/div/div/h3/a
   sleep: 1
 - switch_to_window: -1 # 切到最后的页签
   sleep: 1
@@ -17,6 +21,3 @@
 - switch_to_window: 0 # 切到最后的页签
   sleep: 1
   scroll_bottom:
-- include: login.yml
-- include: register.yml
-- include: order.yml # pageobject
