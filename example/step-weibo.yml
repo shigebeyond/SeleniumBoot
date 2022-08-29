@@ -12,6 +12,14 @@
     # 每次迭代要执行的子步骤
     - scroll_bottom:
       sleep: 2
+  # 循环list类型的变量urls
+#  set_vars:
+#    urls: ['https://www.baidu.com/', 'https://haokan.baidu.com/v?pd=wisenatural&vid=13982311659208377564', 'https://blog.csdn.net/iwic5/article/details/108547441']
+#  for(urls):
+#    # 每次迭代要执行的子步骤
+#    - goto:
+#        url: $for_v
+#      sleep: 2
   # 无限循环，直到遇到跳出动作
   # 有变量for_i记录是第几次迭代（从1开始）
   for:
