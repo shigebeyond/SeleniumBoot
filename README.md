@@ -57,9 +57,9 @@ SeleniumBoot 步骤配置目录/step-*.yml
 
 如执行 `SeleniumBoot example/step-mn52.yml`，输出如下
 ```
-加载并执行步骤文件: /ohome/shi/code/python/SeleniumBoot/example/step-mn52.yml
-处理动作: goto={'url': 'https://www.mn52.com/'}
-处理动作: download_img_elements_by={'xpath': '//img[@class="img-responsive"]'}
+Load and run step file: /ohome/shi/code/python/SeleniumBoot/example/step-mn52.yml
+handle action: goto={'url': 'https://www.mn52.com/'}
+handle action: download_img_elements_by={'xpath': '//img[@class="img-responsive"]'}
 下载文件: url为https://www.mn52.com/img/allimg/2021-04-27/0a3abe80-4616-4740-9968-8d961fe1ab7c_5f9f95f226fb2.jpg, 另存为/ohome/shi/code/python/SeleniumBoot/downloads/0a3abe80-4616-4740-9968-8d961fe1ab7c_5ffb2.jpg
 下载文件: url为https://www.mn52.com/img/allimg/2021-04-27/11cc4156-6e93-4526-9d0d-d911df8d8492_5fa0e85d40cfa.jpg, 另存为/ohome/shi/code/python/SeleniumBoot/downloads/11cc4156-6e93-4526-9d0d-d911df8d8492_5fcfa.jpg
 下载文件: url为https://www.mn52.com/img/allimg/2021-04-27/213fbbec-22f2-4ae4-9f90-15126d980d56_5f895f29a9d5a.jpg, 另存为/ohome/shi/code/python/SeleniumBoot/downloads/213fbbec-22f2-4ae4-9f90-15126d980d56_5fd5a.jpg
