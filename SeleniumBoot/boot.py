@@ -685,8 +685,12 @@ class Boot(object):
     # :param config {css, xpath}
     def switch_to_frame_by(self, config):
         if config == None: # 默认进入最后一个iframe
-            config = {'css': 'iframe:last-child'}
-        ele = self.find_by_any(config)
+            try:
+                ele = self.find_by('css', 'iframe:last-child') # 只有一个iframe时报错：NoSuchElementException
+            except NoSuchElementException:
+                ele = self.find_by('css', 'iframe')
+        else:
+            ele = self.find_by_any(config)
         self.driver.switch_to.frame(ele)
 
     # 跳回到主框架页
