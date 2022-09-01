@@ -115,13 +115,13 @@ class Boot(object):
             if '*' in path:
                 dir, pattern = path.rsplit(os.sep, 1)  # 从后面分割，分割为目录+模式
                 if not os.path.exists(dir):
-                    raise Exception(f'步骤配置目录不存在: {dir}')
+                    raise Exception(f'Step config directory not exist: {dir}')
                 self.run_1dir(dir, pattern)
                 return
 
             # 2 不存在
             if not os.path.exists(path):
-                raise Exception(f'步骤配置文件或目录不存在: {path}')
+                raise Exception(f'Step config file or directory not exist: {path}')
 
             # 3 目录: 遍历执行子文件
             if os.path.isdir(path):
@@ -156,7 +156,7 @@ class Boot(object):
             step_file = os.path.abspath(step_file)
             self.step_dir = os.path.dirname(step_file)
 
-        log.debug(f"加载并执行步骤文件: {step_file}")
+        log.debug(f"Load and run step file: {step_file}")
         # 获得步骤
         steps = read_yaml(step_file)
         self.step_file = step_file
@@ -186,10 +186,10 @@ class Boot(object):
             return
 
         if action not in self.actions:
-            raise Exception(f'无效动作: [{action}]')
+            raise Exception(f'Invalid action: [{action}]')
 
         # 调用动作对应的函数
-        log.debug(f"处理动作: {action}={param}")
+        log.debug(f"handle action: {action}={param}")
         func = self.actions[action]
         func(param)
 
@@ -254,8 +254,8 @@ class Boot(object):
 
         # 2 变量名, 必须是list类型
         n = get_var(n, False)
-        if n == None or not isinstance(n, list):
-            raise Exception(f'for({n})括号中的参数必须要是数字或list类型的变量名')
+        if n == None or not (isinstance(n, list) or isinstance(n, int)):
+            raise Exception(f'Variable in for({n}) parentheses must be int or list type')
         return n
 
     # for循环
@@ -272,13 +272,13 @@ class Boot(object):
         if isinstance(n, list):
             items = n
             n = len(items)
-        log.debug(f"-- 开始循环: {label} -- ")
+        log.debug(f"-- For loop start: {label} -- ")
         last_i = get_var('for_i', False) # 旧的索引
         last_v = get_var('for_v', False) # 旧的元素
         try:
             for i in range(n):
                 # i+1表示迭代次数比较容易理解
-                log.debug(f"第{i+1}次迭代")
+                log.debug(f"{i+1}th iteration")
                 set_var('for_i', i+1) # 更新索引
                 if items == None:
                     v = None
@@ -287,9 +287,9 @@ class Boot(object):
                 set_var('for_v', v) # 更新元素
                 self.run_steps(steps)
         except BreakException as e:  # 跳出循环
-            log.debug(f"-- 跳出循环: {label}, 跳出条件: {e.condition} -- ")
+            log.debug(f"-- For loop break: {label}, break condition: {e.condition} -- ")
         else:
-            log.debug(f"-- 终点循环: {label} -- ")
+            log.debug(f"-- For loop finish: {label} -- ")
         finally:
             set_var('for_i', last_i) # 恢复索引
             set_var('for_v', last_v) # 恢复元素
@@ -335,7 +335,7 @@ class Boot(object):
 
     # 打印变量
     def print_vars(self, _):
-        log.info(f"打印变量: {bvars}")
+        log.info(f"Variables: {bvars}")
 
     # 睡眠
     def sleep(self, seconds):
@@ -465,7 +465,7 @@ class Boot(object):
                     newname = f"{save_file}-{i}"
                 if not os.path.exists(newname):
                     return newname
-            raise Exception('目录太多文件，建议新建目录')
+            raise Exception('Too many file in save_dir, please change other directory.')
 
         return save_file
 
@@ -481,7 +481,7 @@ class Boot(object):
         # 设置变量
         set_var('download_file', save_file)
         self.downloaded_files[url] = save_file
-        log.debug(f"下载文件: url为{url}, 另存为{save_file}")
+        log.debug(f"Dowload file: url is {url}, save path is{save_file}")
         return save_file
 
     # 从图片标签中下载图片
@@ -538,7 +538,7 @@ class Boot(object):
         captcha = ocr_youdao.recognize_text(file_path)
         # 设置变量
         set_var('captcha', captcha)
-        log.debug(f"识别验证码: 图片为{file_path}, 验证码为{captcha}")
+        log.debug(f"Recognize captcha: image file is {file_path}, captcha is {captcha}")
         # 删除文件
         #os.remove(file)
 
@@ -573,14 +573,13 @@ class Boot(object):
     # :param input_data 表单数据, key是输入框的路径, value是填入的值
     def _input_by_type_and_data(self, type, input_data):
         for name, value in input_data.items():
-            log.debug(f"替换变量： {name} = {value}")
             value = replace_var(value)  # 替换变量
 
             # 找到输入框
             try:
                 ele = self.find_by(type, name)
             except Exception as ex:  # 找不到元素
-                log.error(f"找不到输入元素{name}", exc_info = ex)
+                log.error(f"Input element not found{name}", exc_info = ex)
                 continue
 
             if ele.tag_name == 'select': # 设置输入框
@@ -610,7 +609,7 @@ class Boot(object):
                 if type == 'xpath': # xpath支持变量
                     path = replace_var(path)
                 return self.driver.find_element(type2by(type), path)
-        raise Exception(f"没有查找类型: {config}")
+        raise Exception(f"Invalid find type: {config}")
 
     # 根据任一类型，查找元素
     def find_all_by_any(self, config):
@@ -619,7 +618,7 @@ class Boot(object):
             if type in config:
                 path = config[type]
                 return self.driver.find_elements(type2by(type), path)
-        raise Exception(f"没有查找类型: {config}")
+        raise Exception(f"Invalid find type: {config}")
 
     # 根据指定类型，检查元素是否存在
     def exist_by(self, type, path):
@@ -804,7 +803,7 @@ class Boot(object):
     # 执行命令
     def exec(self, cmd):
         output = os.popen(cmd).read()
-        log.debug(f"执行命令: {cmd} | 结果: {output}")
+        log.debug(f"execute commmand: {cmd} | result: {output}")
 
 # cli入口
 def main():
@@ -816,7 +815,7 @@ def main():
     # 步骤配置的yaml
     step_files = parse_cmd('SeleniumBoot', meta['version'])
     if len(step_files) == 0:
-        raise Exception("未指定步骤配置文件或目录")
+        raise Exception("Miss step config file or directory")
     try:
         # 执行yaml配置的步骤
         boot.run(step_files)
@@ -824,7 +823,7 @@ def main():
         if boot.close_on_finish:
             boot.close_driver()
     except Exception as ex:
-        log.error(f"异常环境:当前步骤文件为 {boot.step_file}, 当前url为 {boot.current_url}", exc_info = ex)
+        log.error(f"Exception occurs: current step file is {boot.step_file}, 当前url为 {boot.current_url}", exc_info = ex)
         # 异常时关闭浏览器
         if boot.close_on_exception:
             boot.close_driver()
