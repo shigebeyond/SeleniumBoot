@@ -202,6 +202,8 @@ class Boot(object):
         # 浏览器驱动
         option = ChromeOptions()
         option.add_experimental_option('excludeSwitches', ['enable-automation'])
+        # 模拟手机设备 https://blog.csdn.net/qq_38316655/article/details/113739442
+        # option.add_experimental_option("mobileEmulation", {"deviceName": "Nexus 5"})
         # self.driver = Chrome(options=option)
         self.driver = MyWebDriver(options=option)
         # 当前页面的校验器, 依赖于driver
