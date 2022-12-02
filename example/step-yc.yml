@@ -1,0 +1,7 @@
+# 基础url
+#- base_url: http://api.xxx.com/
+- # 下载文件
+  download:
+    url: https://120.24.162.20/otapack/2022/10/20/9ba89b8f-b4f9-488f-b8fb-6fe8e499ed55.zip
+    save_dir: downloads
+    save_file: xxx.zip # 保存的文件名
