@@ -7,7 +7,7 @@ import os
 import fnmatch
 from pathlib import Path
 from pyutilb.util import *
-from pyutilb import log, YamlBoot, ocr_youdao
+from pyutilb import log, YamlBoot, BreakException, ocr_youdao
 import ast
 from SeleniumBoot.validator import Validator
 from SeleniumBoot.extractor import Extractor
@@ -23,10 +23,6 @@ from seleniumrequests.request import RequestsSessionMixin
 class MyWebDriver(RequestsSessionMixin, Chrome):
     pass
 
-# 跳出循环的异常
-class BreakException(Exception):
-    def __init__(self, condition):
-        self.condition = condition # 跳转条件
 
 # selenium基于yaml的启动器
 class Boot(YamlBoot):
