@@ -291,6 +291,9 @@ class Boot(YamlBoot):
 
     # 执行下载文件
     def _do_download(self, url, save_file):
+        # 忽略base64编码的图片, 如 data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7
+        if url.startswith('data:'):
+            return
         if url in self.downloaded_files:
             return self.downloaded_files[url]
 
