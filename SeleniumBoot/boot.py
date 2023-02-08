@@ -89,6 +89,8 @@ class Boot(YamlBoot):
         # 自动关闭选项
         self.auto_close_option = {}
 
+    def run_action(self, action, param):
+        return super().run_action(action, param)
 
     # 执行多个步骤
     def run_steps(self, steps):
@@ -413,8 +415,23 @@ class Boot(YamlBoot):
                 js = f"arguments[0].value = '{value}'" # 原生js
                 self.driver.execute_script(js, ele)
             else:
+                style = ele.get_attribute('style')
+                # 开放隐藏的元素
+                mat = re.search(r'display:\s*none;', style)
+                if mat != None:
+                    style = style.replace(mat.group(), '')
+                    #ele.set_attribute('style', style) # 无此方法
+                    self.set_attribute(ele, 'style', style)
                 ele.clear() # 先清空
                 ele.send_keys(value) # 后输入
+
+    # js修改元素的属性值
+    def set_attribute(self, ele, name, value):
+        self.driver.execute_script("arguments[0].setAttribute(arguments[1],arguments[2])", ele, name, value)
+
+    # js删除元素的属性值
+    def remove_attribute(self, ele, name):
+        self.driver.execute_script("arguments[0].removeAttribute(arguments[1])", ele, name)
 
     # 根据指定类型，查找元素
     def find_by(self, type, path):
