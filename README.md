@@ -448,46 +448,53 @@ move_to_by:
     css: 'button[type=submit]'
 ```
 
-37. refresh: 刷新网页; 
+37. drag_to_by: 将元素拖到指定位置; 
+```yaml
+drag_to_by:
+    css: 'button[type=submit]' # 被拖动的元素
+    pos: 300,400 # 被拖到的位置坐标
+```
+
+38. refresh: 刷新网页; 
 ```yaml
 refresh: 
 ```
 
-38. forward: 前进; 
+39. forward: 前进; 
 ```yaml
 forward: 
 ```
 
-39. back: 后退; 
+40. back: 后退; 
 ```yaml
 back: 
 ```
 
-40. select_all_by: 全选 ctrl + a
+41. select_all_by: 全选 ctrl + a
 ```
 select_all_by:
     css: '#name'
 ```
     
-41. copy_by: 复制 ctrl + c
+42. copy_by: 复制 ctrl + c
 ```
 copy_by:
     css: '#name'
 ```
     
-42. clip_by: 剪切 ctrl + x
+43. clip_by: 剪切 ctrl + x
 ```
 clip_by:
     css: '#name'
 ```
     
-43. paste_by: 粘贴 ctrl + v
+44. paste_by: 粘贴 ctrl + v
 ```
 paste_by:
     css: '#name'
 ```
 
-44. for: 循环; 
+45. for: 循环; 
 for动作下包含一系列子步骤，表示循环执行这系列子步骤；变量`for_i`记录是第几次迭代（从1开始）,变量`for_v`记录是每次迭代的元素值（仅当是list类型的变量迭代时有效）
 ```yaml
 # 循环3次
@@ -512,7 +519,7 @@ for:
     sleep: 2
 ```
 
-45. once: 只执行一次，等价于 `for(1)`; 
+46. once: 只执行一次，等价于 `for(1)`; 
 once 结合 moveon_if，可以模拟 python 的 `if` 语法效果
 ```yaml
 once:
@@ -522,38 +529,38 @@ once:
     sleep: 2
 ```
 
-46. break_if: 满足条件则跳出循环; 
+47. break_if: 满足条件则跳出循环; 
 只能定义在for/once循环的子步骤中
 ```yaml
 break_if: for_i>2 # 条件表达式，python语法
 ```
 
-47. moveon_if: 满足条件则往下走，否则跳出循环; 
+48. moveon_if: 满足条件则往下走，否则跳出循环; 
 只能定义在for/once循环的子步骤中
 ```yaml
 moveon_if: for_i<=2 # 条件表达式，python语法
 ```
 
-48. moveon_if_exist_by: 如果检查元素存在 则往下走，否则跳出循环; 
+49. moveon_if_exist_by: 如果检查元素存在 则往下走，否则跳出循环; 
 只能定义在for/once循环的子步骤中
 ```yaml
 moveon_if_exist_by:
     css: 'button[type=submit]'
 ```
 
-49. break_if_exist_by: 如果检查元素存在 则跳出循环，否则往下走; 
+50. break_if_exist_by: 如果检查元素存在 则跳出循环，否则往下走; 
 只能定义在for/once循环的子步骤中
 ```yaml
 break_if_exist_by:
     id: button1
 ```
 
-50. include: 包含其他步骤文件，如记录公共的步骤，或记录配置数据(如用户名密码); 
+51. include: 包含其他步骤文件，如记录公共的步骤，或记录配置数据(如用户名密码); 
 ```yaml
 include: part-common.yml
 ```
 
-51. set_vars: 设置变量; 
+52. set_vars: 设置变量; 
 ```yaml
 set_vars:
   name: shi
@@ -561,17 +568,17 @@ set_vars:
   birthday: 5-27
 ```
 
-52. print_vars: 打印所有变量; 
+53. print_vars: 打印所有变量; 
 ```yaml
 print_vars:
 ```
 
-53. base_url: 设置基础url
+54. base_url: 设置基础url
 ```yaml
 base_url: https://www.taobao.com/
 ```
 
-54. exec: 执行命令, 可用于执行 HttpBoot/SeleniumBoot/AppiumBoot/MiniumBoot 等命令，以便打通多端的用例流程
+55. exec: 执行命令, 可用于执行 HttpBoot/SeleniumBoot/AppiumBoot/MiniumBoot 等命令，以便打通多端的用例流程
 ```yaml
 exec: ls
 exec: SeleniumBoot test.yml

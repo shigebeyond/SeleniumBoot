@@ -582,6 +582,7 @@ class Boot(YamlBoot):
         self.execute_js(js)
 
     # 滚动到指定元素
+    # https://zhuanlan.zhihu.com/p/525742938
     def scroll_to_by(self, config):
         ele = self.find_by_any(config)
         self.execute_js("arguments[0].scrollIntoView(false);", ele)
@@ -590,6 +591,14 @@ class Boot(YamlBoot):
     def move_to_by(self, config):
         ele = self.find_by_any(config)
         ActionChains(self.driver).move_to_element(ele).perform()
+
+    # 将元素拖到指定坐标
+    def drag_to_by(self, config):
+        ele = self.find_by_any(config)
+        # ActionChains(self.driver).click_and_hold(ele).move_by_offset(400, 150).release().perform()
+        # 等价于
+        x, y = config['pos'].split(",", 1)
+        ActionChains(self.driver).drag_and_drop_by_offset(ele, x, y).perform()
 
     # 刷新网页
     def refresh(self, _):
