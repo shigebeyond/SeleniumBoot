@@ -4,7 +4,7 @@ from .validator import Validator
 from .boot import Boot
 
 __author__ = "shigebeyond"
-__version__ = "1.0.5"
+__version__ = "1.0.6"
 __description__ = "SeleniumBoot: make an easy way (yaml) to web automation testing"
 
 __all__ = [
