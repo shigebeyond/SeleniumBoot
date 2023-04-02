@@ -7,7 +7,8 @@ import os
 import fnmatch
 from pathlib import Path
 from pyutilb.util import *
-from pyutilb import log, YamlBoot, BreakException, ocr_youdao
+from pyutilb import YamlBoot, BreakException, ocr_youdao
+from pyutilb.log import log
 import ast
 from SeleniumBoot.validator import Validator
 from SeleniumBoot.extractor import Extractor
