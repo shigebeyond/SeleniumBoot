@@ -176,24 +176,17 @@ handle action: download_img_elements_by={'xpath': '//img[@class="img-responsive"
 
 下面详细介绍每个动作:
 
-1. auto_close: 设置自动关闭浏览器的选项
-```yaml
-auto_close:
-    on_finish: true # 完成时关闭浏览器, 默认为false
-    on_exception: true # 异常时关闭浏览器, 默认为false
-```
-
-2. close_driver: 关闭浏览器
+1. close_driver: 关闭浏览器
 ```yaml
 close_driver:
 ```
 
-3. sleep: 线程睡眠; 
+2. sleep: 线程睡眠; 
 ```yaml
 sleep: 2 # 线程睡眠2秒
 ```
 
-4. print: 打印, 支持输出变量/函数; 
+3. print: 打印, 支持输出变量/函数; 
 ```yaml
 # 调试打印
 print: "总申请数=${dyn_data.total_apply}, 剩余份数=${dyn_data.quantity_remain}"
@@ -218,12 +211,12 @@ random_element(var): 从list中随机挑选一个元素，参数var是list类型
 incr(key): 自增值，从1开始，参数key表示不同的自增值，不同key会独立自增
 ```
 
-5. base_url: 设置基础url
+4. base_url: 设置基础url
 ```yaml
 base_url: https://www.taobao.com/
 ```
 
-6. goto: 浏览器跳转; 
+5. goto: 浏览器跳转; 
 ```yaml
 goto:
     url: http://admin.jym1.com/goods/goods_service_list # url,支持写变量
@@ -231,7 +224,7 @@ goto:
       goods_id: //table/tbody/tr[1]/td[1] # 第一行第一列
 ```
 
-7. get: 发get请求, 但无跳转; 
+6. get: 发get请求, 但无跳转; 
 ```yaml
 get:
     url: $dyn_data_url # url,支持写变量
@@ -239,7 +232,7 @@ get:
       dyn_data: "json.loads(response.text[16:-1])" # 变量response是响应对象
 ```
 
-8. post: 发post请求, 但无跳转; 
+7. post: 发post请求, 但无跳转; 
 ```yaml
 post:
     url: http://admin.jym1.com/store/add_store # url,支持写变量
@@ -250,7 +243,7 @@ post:
       store_logo_url: '$img'
 ```
 
-9. upload: 上传文件; 
+8. upload: 上传文件; 
 ```yaml
 upload: # 上传文件/图片
     url: http://admin.jym1.com/upload/common_upload_img/store_img
@@ -261,7 +254,7 @@ upload: # 上传文件/图片
       img: $.data.url
 ```
 
-10. submit_form: 提交表单; 
+9. submit_form: 提交表单; 
 是 `input_by_name` 与 `click_by({'css':'[type=submit]'})` 的结合
 ```yaml
 submit_form:
@@ -270,28 +263,28 @@ submit_form:
   passwd: '123456'
 ```
 
-11. input_by_name: 填充 name 指定的输入框; 
+10. input_by_name: 填充 name 指定的输入框; 
 ```yaml
 input_by_name:
   # 输入框name: 填充的值(支持写变量)
   account: '18877310999'
 ```
 
-12. input_by_css: 填充 css selector 指定的输入框; 
+11. input_by_css: 填充 css selector 指定的输入框; 
 ```yaml
 input_by_css:
   # 输入框css selector模式: 填充的值(支持写变量)
   '#account': '18877310999'
 ```
 
-13. input_by_xpath: 填充 xpath 指定的输入框; 
+12. input_by_xpath: 填充 xpath 指定的输入框; 
 ```yaml
 input_by_xpath:
   # 输入框xpath路径: 填充的值(支持写变量)
   "//input[@id='account']": '18877310999'
 ```
 
-14. download: 下载文件; 
+13. download: 下载文件; 
 变量`download_file`记录最新下载的单个文件
 ```yaml
 download:
@@ -300,7 +293,7 @@ download:
     save_file: test.jpg # 保存的文件名，默认为url中最后一级的文件名
 ```
 
-15. download_img_element_by: 下载单个`<img>`标签中加载的图片; 
+14. download_img_element_by: 下载单个`<img>`标签中加载的图片; 
 变量`download_file`记录最新下载的单个图片
 ```yaml
 download_img_element_by:
@@ -310,7 +303,7 @@ download_img_element_by:
     #save_file: test.jpg # 保存的文件名，默认为url中最后一级的文件名
 ```
 
-16. download_img_elements_by: 下载多个`<img>`标签中加载的图片; 
+15. download_img_elements_by: 下载多个`<img>`标签中加载的图片; 
 变量`download_files`记录最新下载的多个图片
 ```yaml
 download_img_elements_by:
@@ -318,7 +311,7 @@ download_img_elements_by:
     save_dir: downloads
 ```
 
-17. recognize_captcha: 识别验证码; 
+16. recognize_captcha: 识别验证码; 
 参数同 `download` 动作， 因为内部就是调用 `download`;
 而变量`captcha`记录识别出来的验证码
 ```
@@ -328,7 +321,7 @@ recognize_captcha:
     # save_file: test.jpg # 保存的文件名，默认为url中最后一级的文件名
 ```
 
-18. recognize_captcha_element: 识别验证码标签中的验证码; 
+17. recognize_captcha_element: 识别验证码标签中的验证码; 
 参数同 `download_img_element_by` 动作， 因为内部就是调用 `download_img_element_by`;
 而变量`captcha`记录识别出来的验证码
 ```
@@ -339,7 +332,7 @@ recognize_captcha_element:
     #save_file: test.jpg # 保存的文件名，默认为url中最后一级的文件名
 ```
 
-19. click_by/click_by_if_exist: 点击指定的元素; 
+18. click_by/click_by_if_exist: 点击指定的元素; 
 ```yaml
 click_by:
   css: 'button[type=submit]' # 元素的css selector模式，与xpath属性只能二选一
@@ -347,41 +340,41 @@ click_by:
 ```
 如果点击之前要先判断元素是否存在，则换用 click_by_if_exist
 
-20. right_click_by: 右击指定的元素; 
+19. right_click_by: 右击指定的元素; 
 ```yaml
 right_click_by:
   css: 'button[type=submit]' # 元素的css selector模式，与xpath属性只能二选一
   #xpath: '//button[@type="submit"]' # 元素的xpath路径，与css属性只能二选一
 ```
 
-21. double_click_by: 双击指定的元素; 
+20. double_click_by: 双击指定的元素; 
 ```yaml
 double_click_by:
   css: 'button[type=submit]' # 元素的css selector模式，与xpath属性只能二选一
   #xpath: '//button[@type="submit"]' # 元素的xpath路径，与css属性只能二选一
 ```
 
-22. alert_accept: 点击弹框的确定按钮; 
+21. alert_accept: 点击弹框的确定按钮; 
 ```yaml
 alert_accept: 
 ```
 
-23. alert_dismiss: 取消弹框; 
+22. alert_dismiss: 取消弹框; 
 ```yaml
 alert_dismiss: 
 ```
 
-24. max_window: 最大化窗口; 
+23. max_window: 最大化窗口; 
 ```yaml
 max_window: 
 ```
 
-25. resize_window: 调整窗口大小; 
+24. resize_window: 调整窗口大小; 
 ```yaml
 resize_window: 100,200 # 宽,高
 ```
 
-26. switch_to_frame_by: 切换进入iframe; 
+25. switch_to_frame_by: 切换进入iframe; 
 ```yaml
 switch_to_frame_by:
   css: 'iframe#main' # iframe的css selector模式，与xpath属性只能二选一
@@ -389,25 +382,25 @@ switch_to_frame_by:
 switch_to_frame_by: # 参数可省, 默认是进入最后一个iframe 
 ```
 
-27. switch_to_frame_out: 跳回到主框架页; 
+26. switch_to_frame_out: 跳回到主框架页; 
 ```yaml
 switch_to_frame_out: 
 ```
 
-28. switch_to_window: 切到第几个窗口(页签), 从0开始, 支持负数; 
+27. switch_to_window: 切到第几个窗口(页签), 从0开始, 支持负数; 
 ```yaml
 switch_to_window: 1 # 切到第2个窗口(页签)
 switch_to_window: -1 # 切到最后一个窗口(页签)
 ```
 
-29. screenshot: 整个窗口截图存为png; 
+28. screenshot: 整个窗口截图存为png; 
 ```yaml
 screenshot:
     save_dir: downloads # 保存的目录，默认为 downloads
     save_file: test.png # 保存的文件名，默认为:时间戳.png
 ```
 
-30. screenshot_element_by: 对某个标签截图存为png; 
+29. screenshot_element_by: 对某个标签截图存为png; 
 ```yaml
 screenshot_element_by
     css: 'iframe#main' # iframe的css selector模式，与xpath属性只能二选一
@@ -416,85 +409,85 @@ screenshot_element_by
     save_file: test.png # 保存的文件名，默认为:时间戳.png
 ```
 
-31. execute_js: 执行js; 
+30. execute_js: 执行js; 
 ```yaml
 execute_js: alert('hello world')
 ```
 
-32. scroll: 滚动到指定位置; 
+31. scroll: 滚动到指定位置; 
 ```yaml
 scroll: 100,200
 ```
 
-33. scroll_top: 滚动到顶部; 
+32. scroll_top: 滚动到顶部; 
 ```yaml
 scroll_top: 
 ```
 
-34. scroll_bottom: 滚动到底部; 
+33. scroll_bottom: 滚动到底部; 
 ```yaml
 scroll_bottom: 
 ```
 
-35. scroll_to_by: 滚动到指定元素; 
+34. scroll_to_by: 滚动到指定元素; 
 ```yaml
 scroll_to_by: 
     css: 'button[type=submit]'
 ```
 
-36. move_to_by: 鼠标移动到指定元素; 
+35. move_to_by: 鼠标移动到指定元素; 
 ```yaml
 move_to_by: 
     css: 'button[type=submit]'
 ```
 
-37. drag_to_by: 将元素拖到指定位置; 
+36. drag_to_by: 将元素拖到指定位置; 
 ```yaml
 drag_to_by:
     css: 'button[type=submit]' # 被拖动的元素
     pos: 300,400 # 被拖到的位置坐标
 ```
 
-38. refresh: 刷新网页; 
+37. refresh: 刷新网页; 
 ```yaml
 refresh: 
 ```
 
-39. forward: 前进; 
+38. forward: 前进; 
 ```yaml
 forward: 
 ```
 
-40. back: 后退; 
+39. back: 后退; 
 ```yaml
 back: 
 ```
 
-41. select_all_by: 全选 ctrl + a
+40. select_all_by: 全选 ctrl + a
 ```
 select_all_by:
     css: '#name'
 ```
     
-42. copy_by: 复制 ctrl + c
+41. copy_by: 复制 ctrl + c
 ```
 copy_by:
     css: '#name'
 ```
     
-43. clip_by: 剪切 ctrl + x
+42. clip_by: 剪切 ctrl + x
 ```
 clip_by:
     css: '#name'
 ```
     
-44. paste_by: 粘贴 ctrl + v
+43. paste_by: 粘贴 ctrl + v
 ```
 paste_by:
     css: '#name'
 ```
 
-45. for: 循环; 
+44. for: 循环; 
 for动作下包含一系列子步骤，表示循环执行这系列子步骤；变量`for_i`记录是第几次迭代（从1开始）,变量`for_v`记录是每次迭代的元素值（仅当是list类型的变量迭代时有效）
 ```yaml
 # 循环3次
@@ -519,7 +512,7 @@ for:
     sleep: 2
 ```
 
-46. once: 只执行一次，等价于 `for(1)`; 
+45. once: 只执行一次，等价于 `for(1)`; 
 once 结合 moveon_if，可以模拟 python 的 `if` 语法效果
 ```yaml
 once:
@@ -529,38 +522,38 @@ once:
     sleep: 2
 ```
 
-47. break_if: 满足条件则跳出循环; 
+46. break_if: 满足条件则跳出循环; 
 只能定义在for/once循环的子步骤中
 ```yaml
 break_if: for_i>2 # 条件表达式，python语法
 ```
 
-48. moveon_if: 满足条件则往下走，否则跳出循环; 
+47. moveon_if: 满足条件则往下走，否则跳出循环; 
 只能定义在for/once循环的子步骤中
 ```yaml
 moveon_if: for_i<=2 # 条件表达式，python语法
 ```
 
-49. moveon_if_exist_by: 如果检查元素存在 则往下走，否则跳出循环; 
+48. moveon_if_exist_by: 如果检查元素存在 则往下走，否则跳出循环; 
 只能定义在for/once循环的子步骤中
 ```yaml
 moveon_if_exist_by:
     css: 'button[type=submit]'
 ```
 
-50. break_if_exist_by: 如果检查元素存在 则跳出循环，否则往下走; 
+49. break_if_exist_by: 如果检查元素存在 则跳出循环，否则往下走; 
 只能定义在for/once循环的子步骤中
 ```yaml
 break_if_exist_by:
     id: button1
 ```
 
-51. include: 包含其他步骤文件，如记录公共的步骤，或记录配置数据(如用户名密码); 
+50. include: 包含其他步骤文件，如记录公共的步骤，或记录配置数据(如用户名密码); 
 ```yaml
 include: part-common.yml
 ```
 
-52. set_vars: 设置变量; 
+51. set_vars: 设置变量; 
 ```yaml
 set_vars:
   name: shi
@@ -568,17 +561,17 @@ set_vars:
   birthday: 5-27
 ```
 
-53. print_vars: 打印所有变量; 
+52. print_vars: 打印所有变量; 
 ```yaml
 print_vars:
 ```
 
-54. base_url: 设置基础url
+53. base_url: 设置基础url
 ```yaml
 base_url: https://www.taobao.com/
 ```
 
-55. exec: 执行命令, 可用于执行 HttpBoot/SeleniumBoot/AppiumBoot/MiniumBoot 等命令，以便打通多端的用例流程
+54. exec: 执行命令, 可用于执行 HttpBoot/SeleniumBoot/AppiumBoot/MiniumBoot 等命令，以便打通多端的用例流程
 ```yaml
 exec: ls
 exec: SeleniumBoot test.yml

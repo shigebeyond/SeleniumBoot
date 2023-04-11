@@ -32,7 +32,6 @@ class Boot(YamlBoot):
         super().__init__()
         # 动作映射函数
         actions = {
-            'auto_close': self.auto_close,
             'close_driver': self.close_driver,
             'base_url': self.base_url,
             'goto': self.goto,
@@ -87,8 +86,6 @@ class Boot(YamlBoot):
         self.downloaded_files = {}
         # 基础url
         self._base_url = None
-        # 自动关闭选项
-        self.auto_close_option = {}
 
     def run_action(self, action, param):
         return super().run_action(action, param)
@@ -125,29 +122,6 @@ class Boot(YamlBoot):
         if self.driver != None:
             self.driver.quit()
             self.driver = None
-
-    # 设置自动关闭
-    def auto_close(self, option):
-        if option != None:
-            self.auto_close_option = option
-
-    # 是否在完成时关闭浏览器
-    @property
-    def close_on_finish(self):
-        option = self.auto_close_option
-        if 'on_finish' in option:
-            return bool(option['on_finish'])
-
-        return False
-
-    # 是否在异常时关闭浏览器
-    @property
-    def close_on_exception(self):
-        option = self.auto_close_option
-        if 'on_exception' in option:
-            return bool(option['on_exception'])
-
-        return False
 
     # 当前url
     @property
@@ -668,15 +642,13 @@ def main():
     try:
         # 执行yaml配置的步骤
         boot.run(step_files)
-        # 完成时关闭浏览器
-        if boot.close_on_finish:
-            boot.close_driver()
     except Exception as ex:
         log.error(f"Exception occurs: current step file is {boot.step_file}, 当前url为 {boot.current_url}", exc_info = ex)
-        # 异常时关闭浏览器
-        if boot.close_on_exception:
-            boot.close_driver()
         raise ex
+    finally:
+        # 关闭浏览器
+        if option.autoclose:
+            boot.close_driver()
 
 if __name__ == '__main__':
     main()
