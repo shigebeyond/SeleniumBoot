@@ -7,6 +7,8 @@ import os
 import fnmatch
 from pathlib import Path
 from pyutilb.util import *
+from pyutilb.file import *
+from pyutilb.cmd import *
 from pyutilb import YamlBoot, BreakException, ocr_youdao
 from pyutilb.log import log
 import ast
