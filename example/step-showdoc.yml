@@ -1,0 +1,10 @@
+- # 登录
+  goto:
+    url: http://192.168.0.170:4999/web/#/user/login
+  sleep: 2
+  input_by_css:
+    input[type=text]: 'showdoc'
+    input[type=password]: '???'
+  click_by:
+    css: button
+  sleep: 20
