@@ -283,7 +283,7 @@ class Boot(YamlBoot):
         # 设置变量
         set_var('download_file', save_file)
         self.downloaded_files[url] = save_file
-        log.debug(f"Dowload file: url is {url}, save path is{save_file}")
+        log.debug(f"Dowload file: url is %s, save path is %s", url, save_file)
         return save_file
 
     # 从图片标签中下载图片
@@ -340,7 +340,7 @@ class Boot(YamlBoot):
         captcha = ocr_youdao.recognize_text(file_path)
         # 设置变量
         set_var('captcha', captcha)
-        log.debug(f"Recognize captcha: image file is {file_path}, captcha is {captcha}")
+        log.debug(f"Recognize captcha: image file is %s, captcha is %s", file_path, captcha)
         # 删除文件
         #os.remove(file)
 
@@ -381,7 +381,7 @@ class Boot(YamlBoot):
             try:
                 ele = self.find_by(type, name)
             except Exception as ex:  # 找不到元素
-                log.error(f"Input element not found{name}", exc_info = ex)
+                log.error(f"Input element not found: %s", name, exc_info = ex)
                 continue
 
             if ele.tag_name == 'select': # 设置输入框
@@ -645,7 +645,7 @@ def main():
         # 执行yaml配置的步骤
         boot.run(step_files)
     except Exception as ex:
-        log.error(f"Exception occurs: current step file is {boot.step_file}, 当前url为 {boot.current_url}", exc_info = ex)
+        log.error(f"Exception occurs: current step file is %s, 当前url为 %s", boot.step_file, boot.current_url, exc_info = ex)
         raise ex
     finally:
         # 关闭浏览器
