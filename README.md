@@ -593,6 +593,12 @@ validate_by_xpath:
   "//div[@id='goods_title']":
     contains: 衬衫 # 即 title 元素的值包含'衬衫'
 ```
+可简写为:
+```yaml
+validate_by_xpath:
+  - "//div[@id='goods_id'] > 0"
+  - "//div[@id='goods_title'] contains 衬衫"
+```
 
 2. validate_by_css: 
 从html的响应中校验 css selector 模式对应的元素的值
@@ -603,6 +609,12 @@ validate_by_css:
   '#goods_title':
     contains: 衬衫 # 即 title 元素的值包含'衬衫'
 ```
+可简写为:
+```yaml
+validate_by_css:
+  - '#id > 0'
+  - '#goods_title contains 衬衫'
+```
 
 3. validate_by_jsonpath: 
 从json响应中校验 多层属性 的值
@@ -612,6 +624,12 @@ validate_by_jsonpath:
      '>': 0 # 校验符号或函数: 校验的值, 即 id 元素的值>0
   '$.data.goods_title':
     contains: 衬衫 # 即 title 元素的值包含'衬衫'
+```
+可简写为:
+```yaml
+validate_by_jsonpath:
+  - '$.data.goods_id > 0'
+  - '$.data.goods_title contains 衬衫'
 ```
 
 #### 校验符号或函数
