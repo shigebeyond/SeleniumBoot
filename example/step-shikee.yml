@@ -1,6 +1,14 @@
 - # 首页
   goto:
     url: http://www.shikee.com/
+#  validate_by_css:
+#    - '#J_NewIndexTipBtn = 进入首页'
+  extract_by_css:
+    txt: '#J_NewIndexTipBtn'
+  if(txt=='进入!首页'):
+    - print: '----- 执行if -----'
+  else:
+    - print: '----- 执行else -----'
   click_by:
     id: J_NewIndexTipBtn
 - # 列表页

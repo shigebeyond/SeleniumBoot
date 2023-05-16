@@ -548,12 +548,22 @@ break_if_exist_by:
     id: button1
 ```
 
-50. include: 包含其他步骤文件，如记录公共的步骤，或记录配置数据(如用户名密码); 
+50. if/else: 满足条件则执行if分支，否则执行else分支
+```yaml
+- extract_by_id:
+    txt: 'J_NewIndexTipBtn'
+- if(txt=='进入首页'): # 括号中包含的是布尔表达式，如果表达式结果为true，则执行if动作下的子步骤，否则执行else动作下的子步骤
+    - print: '----- 执行if -----'
+  else:
+    - print: '----- 执行else -----'
+```
+
+51. include: 包含其他步骤文件，如记录公共的步骤，或记录配置数据(如用户名密码); 
 ```yaml
 include: part-common.yml
 ```
 
-51. set_vars: 设置变量; 
+52. set_vars: 设置变量; 
 ```yaml
 set_vars:
   name: shi
@@ -561,17 +571,17 @@ set_vars:
   birthday: 5-27
 ```
 
-52. print_vars: 打印所有变量; 
+53. print_vars: 打印所有变量; 
 ```yaml
 print_vars:
 ```
 
-53. base_url: 设置基础url
+54. base_url: 设置基础url
 ```yaml
 base_url: https://www.taobao.com/
 ```
 
-54. exec: 执行命令, 可用于执行 HttpBoot/SeleniumBoot/AppiumBoot/MiniumBoot 等命令，以便打通多端的用例流程
+55. exec: 执行命令, 可用于执行 HttpBoot/SeleniumBoot/AppiumBoot/MiniumBoot 等命令，以便打通多端的用例流程
 ```yaml
 exec: ls
 exec: SeleniumBoot test.yml
