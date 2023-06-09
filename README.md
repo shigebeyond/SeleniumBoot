@@ -30,6 +30,7 @@ Selenium是基于浏览器的自动化测试工具，但是要写python代码；
 [AppiumBoot](https://github.com/shigebeyond/AppiumBoot)
 [MiniumBoot](https://github.com/shigebeyond/MiniumBoot)
 [ExcelBoot](https://github.com/shigebeyond/ExcelBoot)
+[MonitorBoot](https://github.com/shigebeyond/MonitorBoot)
 
 ## todo
 1. 支持更多的动作
